@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm Wed Nov 06 13:41:35 2019
+AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm Wed Nov 06 14:08:16 2019
 
 
 EQU  SIGNATURE_000 0000001e
@@ -607,8 +607,8 @@ EQU  INT_VECTORS_SIZE 0000002a
 DEF  num          r20
 DEF  key          r21
 CSEG FOREVER      00000005
-CSEG LOOP         00000008
-CSEG D_3          0000000c
-CSEG D_2          0000000d
-CSEG D_1          0000000e
-CSEG NOT_10       00000018
+CSEG LOOP         00000009
+CSEG D_3          0000000d
+CSEG D_2          0000000e
+CSEG D_1          0000000f
+CSEG NOT_10       00000019

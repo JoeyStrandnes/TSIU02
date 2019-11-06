@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm Wed Nov 06 13:41:35 2019
+AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm Wed Nov 06 14:08:16 2019
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m16adef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m16adef.inc'
@@ -883,37 +883,38 @@ AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\
 000002 e00f                      	ldi r16,$0F
 000003 bb07                      	out DDRB,r16
 000004 2744                      	clr num
-                                 
+                                 	
                                  FOREVER:
 000005 2755                      	clr key ; get keypress in boolean ’key’
-000006 99c8                      	sbic PINA,0 ; skip over if not pressed
-000007 955a                      	dec key ; key=FF
-                                 
+000006 ef5f                      	ldi key, $FF
+000007 99c8                      	sbic PINA,0 ; skip over if not pressed
+000008 955a                      	dec key ; key=FF
+                                 	;test
                                  LOOP:
-000008 3050                      	cpi key,0
-000009 f3d9                      	breq FOREVER ; until key
-00000a bb48                      	out PORTB,num ; print digit
-00000b e023                      	ldi r18,3
+000009 3050                      	cpi key,0
+00000a f3d1                      	breq FOREVER ; until key
+00000b bb48                      	out PORTB,num ; print digit
+00000c e023                      	ldi r18,3
                                  D_3:
-00000c e010                      	ldi r17,0
+00000d e010                      	ldi r17,0
                                  D_2:
-00000d e000                      	ldi r16,0
+00000e e000                      	ldi r16,0
                                  D_1:
-00000e 950a                      	dec r16
-00000f f7f1                      	brne D_1
-000010 951a                      	dec r17
-000011 f7d9                      	brne D_2
-000012 952a                      	dec r18
-000013 f7c1                      	brne D_3
-000014 9543                      	inc num ; num++
-000015 304a                      	cpi num,10 ; num==10?
-000016 f409                      	brne NOT_10 ; no, so jump
-000017 2744                      	clr num ; was 10
+00000f 950a                      	dec r16
+000010 f7f1                      	brne D_1
+000011 951a                      	dec r17
+000012 f7d9                      	brne D_2
+000013 952a                      	dec r18
+000014 f7c1                      	brne D_3
+000015 9543                      	inc num ; num++
+000016 304a                      	cpi num,10 ; num==10?
+000017 f409                      	brne NOT_10 ; no, so jump
+000018 2744                      	clr num ; was 10
                                  
                                  NOT_10:
-000018 2755                      	clr key ; get keypress in boolean ’key’
-000019 99c8                      	sbic PINA,0 ; skip over if not pressed
-00001a 955a                      	dec key ; key=FF
+000019 2755                      	clr key ; get keypress in boolean ’key’
+00001a 99c8                      	sbic PINA,0 ; skip over if not pressed
+00001b 955a                      	dec key ; key=FF
 
 
 RESOURCE USE INFORMATION
@@ -934,7 +935,7 @@ counted separately from r26..r31 here.
 x  :   0 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
 r13:   0 r14:   0 r15:   0 r16:   6 r17:   2 r18:   2 r19:   0 r20:   5 
-r21:   5 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
+r21:   6 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
 r29:   0 r30:   0 r31:   0 
 Registers used: 5 out of 35 (14.3%)
 
@@ -949,7 +950,7 @@ clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   5 cls   :   0
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :   2 cpse  :   0 dec   :   5 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   1 jmp   :   1 
-ld    :   0 ldd   :   0 ldi   :   4 lds   :   0 lpm   :   0 lsl   :   0 
+ld    :   0 ldd   :   0 ldi   :   5 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   3 pop   :   0 
 push  :   0 rcall :   0 ret   :   0 reti  :   0 rjmp  :   0 rol   :   0 
@@ -963,7 +964,7 @@ Instructions used: 10 out of 113 (8.8%)
 "ATmega16A" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00003a     58      0     58   16384   0.4%
+[.cseg] 0x000000 0x00003c     60      0     60   16384   0.4%
 [.dseg] 0x000060 0x000060      0      0      0    1024   0.0%
 [.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 

@@ -15,9 +15,10 @@
 	
 FOREVER:
 	clr key ; get keypress in boolean ’key’
+	ldi key, $FF
 	sbic PINA,0 ; skip over if not pressed
 	dec key ; key=FF
-
+	;test
 LOOP:
 	cpi key,0
 	breq FOREVER ; until key

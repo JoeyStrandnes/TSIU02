@@ -23,10 +23,10 @@
  </OUTPUT_FILES>
  <LABELS>
   <FOREVER><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>16</LINE></FOREVER>
-  <LOOP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>21</LINE></LOOP>
-  <D_3><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>26</LINE></D_3>
-  <D_2><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>28</LINE></D_2>
-  <D_1><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>30</LINE></D_1>
-  <NOT_10><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>42</LINE></NOT_10>
+  <LOOP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>22</LINE></LOOP>
+  <D_3><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>27</LINE></D_3>
+  <D_2><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>29</LINE></D_2>
+  <D_1><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>31</LINE></D_1>
+  <NOT_10><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Lab_0\Miniprojekt\Miniprojekt\main.asm</FILE><LINE>43</LINE></NOT_10>
  </LABELS>
 </ASSEMBLER_INFO>
