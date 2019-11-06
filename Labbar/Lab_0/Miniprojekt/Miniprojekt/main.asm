@@ -12,7 +12,7 @@
 	ldi r16,$0F
 	out DDRB,r16
 	clr num
-
+	
 FOREVER:
 	clr key ; get keypress in boolean ’key’
 	sbic PINA,0 ; skip over if not pressed
