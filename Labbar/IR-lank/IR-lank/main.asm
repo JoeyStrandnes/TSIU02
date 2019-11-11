@@ -5,30 +5,25 @@
 ; Author : josst471
 ;
 
-	
-	ldi r22, $0F
-	;ldi r23, $00
-	ldi r21, $01
-	out DDRB, r22
-	;out DDRA, r23
 
-	in r21, PINA
+	ldi r21, $00
+	ldi r23, $00 ; Startbit counter
+	ldi r20, $00
+
+	ldi r22, $0F
+	out DDRB, r22
+
+	;in r21, PINA
 
 START_BIT:
-	;clr r21
 
-	;ldi r21, PINA
 	sbis PINA, 0
-	;cpi r21, 1
 	brne START_BIT
-	;ANDI R21, (1<<7) ; Shift in PINA to Register1
-
-
-DATA:
+	ldi r16, 31
+	clr r23
 
 DELAY:
 	sbi PORTB, 7
-	ldi r16, 10
 delayYttreLoop:
 	ldi r17, $1F
 delayInreLoop:
@@ -37,4 +32,31 @@ delayInreLoop:
 	dec r16
 	brne delayYttreLoop
 	cbi PORTB, 7
-	ret
+
+	inc r23
+
+
+DATA:
+	
+	ldi r16, 62
+	
+	cpi r23, 2
+	brne DELAY
+
+	in r20, PINA
+	lsl r20
+
+	cpi r23, 3
+	brne DELAY
+
+	in r20, PINA
+	lsl r20
+
+	;sbic PINA, 0
+	;ldi r22, 1
+	;ldi r22, 0
+	
+
+
+	inc r21
+	jmp DELAY
