@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm Fri Nov 08 13:07:04 2019
+AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm Mon Nov 11 13:14:35 2019
 
 
 EQU  SIGNATURE_000 0000001e
@@ -604,6 +604,8 @@ EQU  INT2addr     00000024
 EQU  OC0addr      00000026
 EQU  SPMRaddr     00000028
 EQU  INT_VECTORS_SIZE 0000002a
-CSEG DELAY        00000006
-CSEG delayYttreLoop 00000008
-CSEG delayInreLoop 00000009
+CSEG START_BIT    00000006
+CSEG DATA         00000008
+CSEG DELAY        00000008
+CSEG delayYttreLoop 0000000a
+CSEG delayInreLoop 0000000b

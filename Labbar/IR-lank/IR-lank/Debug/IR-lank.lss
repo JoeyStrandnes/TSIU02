@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm Fri Nov 08 13:07:04 2019
+AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm Mon Nov 11 13:14:35 2019
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m16adef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m16adef.inc'
@@ -873,29 +873,41 @@ AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lan
                                  ; IR-lank.asm
                                  ;
                                  ; Created: 2019-11-08 12:25:30
-                                 ; Author : Joey Strandnes
+                                 ; Author : josst471
                                  ;
                                  
-                                 
+                                 	
 000000 e06f                      	ldi r22, $0F
-000001 e071                      	ldi r23, $01
-000002 bb67                      	out DDRB, r22
-000003 bb7a                      	out DDRA, r23
+000001 e070                      	ldi r23, $00
+000002 e051                      	ldi r21, $01
+000003 bb67                      	out DDRB, r22
+000004 bb7a                      	out DDRA, r23
                                  
-000004 b359                      	IN R21, PINA
-000005 7058                      	ANDI R21, (1<<3) ; Shift in PINA to Register1
+000005 b359                      	in r21, PINA
+                                 
+                                 START_BIT:
+                                 	;clr r21
+                                 
+                                 	;ldi r21, PINA
+000006 9bc8                      	sbis PINA, 0
+                                 	;cpi r21, 1
+000007 f7f1                      	brne START_BIT
+                                 	;ANDI R21, (1<<7) ; Shift in PINA to Register1
+                                 
+                                 
+                                 DATA:
                                  
                                  DELAY:
-000006 9ac7                      	sbi PORTB, 7
-000007 e00a                      	ldi r16, 10
+000008 9ac7                      	sbi PORTB, 7
+000009 e00a                      	ldi r16, 10
                                  delayYttreLoop:
-000008 e11f                      	ldi r17, $1F
+00000a e11f                      	ldi r17, $1F
                                  delayInreLoop:
-000009 951a                      	dec r17
-00000a f7f1                      	brne delayInreLoop
-00000b 950a                      	dec r16
-00000c f7d9                      	brne delayYttreLoop
-00000d 98c7                      	cbi PORTB, 7
+00000b 951a                      	dec r17
+00000c f7f1                      	brne delayInreLoop
+00000d 950a                      	dec r16
+00000e f7d9                      	brne delayYttreLoop
+00000f 98c7                      	cbi PORTB, 7
 
 
 RESOURCE USE INFORMATION
@@ -922,20 +934,20 @@ Registers used: 5 out of 35 (14.3%)
 
 "ATmega16A" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
-andi  :   1 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
+andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   2 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brne  :   3 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   1 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :   0 cpse  :   0 dec   :   2 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   0 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :   4 lds   :   0 lpm   :   0 lsl   :   0 
+ld    :   0 ldd   :   0 ldi   :   5 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   2 pop   :   0 
 push  :   0 rcall :   0 ret   :   1 reti  :   0 rjmp  :   0 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   1 sbic  :   0 sbis  :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   1 sbic  :   0 sbis  :   1 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   0 
@@ -945,7 +957,7 @@ Instructions used: 9 out of 113 (8.0%)
 "ATmega16A" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00001e     30      0     30   16384   0.2%
+[.cseg] 0x000000 0x000022     34      0     34   16384   0.2%
 [.dseg] 0x000060 0x000060      0      0      0    1024   0.0%
 [.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 
