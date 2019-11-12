@@ -22,10 +22,14 @@
   <FILE>IR-lank.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <START_BIT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>18</LINE></START_BIT>
-  <DELAY><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>25</LINE></DELAY>
-  <delayYttreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>27</LINE></delayYttreLoop>
-  <delayInreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>29</LINE></delayInreLoop>
-  <DATA><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>39</LINE></DATA>
+  <SETUP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>7</LINE></SETUP>
+  <START_BIT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>21</LINE></START_BIT>
+  <DELAY><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>59</LINE></DELAY>
+  <DOUBLECHECK><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>28</LINE></DOUBLECHECK>
+  <DATA><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>34</LINE></DATA>
+  <PRINT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>45</LINE></PRINT>
+  <NOCARRY><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>52</LINE></NOCARRY>
+  <delayYttreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>61</LINE></delayYttreLoop>
+  <delayInreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\IR-lank\IR-lank\main.asm</FILE><LINE>63</LINE></delayInreLoop>
  </LABELS>
 </ASSEMBLER_INFO>
