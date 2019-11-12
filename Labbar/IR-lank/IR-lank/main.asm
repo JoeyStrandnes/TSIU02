@@ -1,9 +1,3 @@
-;
-; AssemblerApplication1.asm
-; LAB1 IR
-; Created: 2019-11-05 18:00:30
-; Author : Johan
-
 SETUP:	
 	ldi		r22,$FF					; Utport till displayen+scop
 	out		DDRB,r22				; Utport till displayen+scop
@@ -21,7 +15,7 @@ SETUP:
 START_BIT:
 	sbis	PINA,0 
 	rjmp	START_BIT
-	ldi		r16, 31
+	ldi		r16, 6
 	call	DELAY
 
 
@@ -34,7 +28,7 @@ DOUBLECHECK:
 DATA:
 	lsl		r21 
 	sbic	PINA,0
-	inc		r21					;ökar r21 enbart om Pin0 är hög
+	inc		r21					;Ã¶kar r21 enbart om Pin0 Ã¤r hÃ¶g
 	dec		r20					;Counter++
 	breq	PRINT
 	;brne	PRINT
@@ -44,7 +38,6 @@ DATA:
 
 PRINT:
 	
-	
 	lsl		r19
 	lsr		r21
 	brcc	NOCARRY
@@ -52,7 +45,7 @@ PRINT:
 NOCARRY:	
 	dec		r18;counter++
 	brne	PRINT
-	out		PORTB,r19			; fortfarande LSB/MSB bakvända
+	out		PORTB,r19			
 	rjmp	SETUP
 
 
@@ -66,5 +59,5 @@ delayInreLoop:
 	dec		r16
 	brne	delayYttreLoop
 	cbi		PORTB,7	
-	ldi		r16,62
+	ldi		r16,11
 	ret	
