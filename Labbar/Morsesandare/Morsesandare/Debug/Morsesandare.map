@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm Wed Nov 13 16:55:18 2019
+AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm Wed Nov 13 19:01:35 2019
 
 
 EQU  SIGNATURE_000 0000001e
@@ -605,10 +605,10 @@ EQU  OC0addr      00000026
 EQU  SPMRaddr     00000028
 EQU  INT_VECTORS_SIZE 0000002a
 CSEG SETUP        00000000
-CSEG TEXT         0000000a
-CSEG GET_CHAR     00000012
-CSEG PRINT        00000016
-CSEG DELAY        00000018
-CSEG delayYttreLoop 00000019
-CSEG delayInreLoop 0000001a
-CSEG MORSE        0000001f
+CSEG LOOP         0000000a
+CSEG GET_CHAR     00000017
+CSEG TEXT         0000000f
+CSEG DELAY        00000019
+CSEG delayYttreLoop 0000001a
+CSEG delayInreLoop 0000001b
+CSEG MORSE        00000020

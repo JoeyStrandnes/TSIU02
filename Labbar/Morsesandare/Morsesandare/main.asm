@@ -24,25 +24,36 @@ SETUP:
 	ldi		r20, 4					; COUNTER 1
 	ldi		r18, 4					; COUNTER 2
 
-TEXT:
-	.db "DATORTEKNIK", $00
 	ldi		ZL, LOW(TEXT*2)
 	ldi		ZH, HIGH(TEXT*2)
 
-GET_CHAR:
+	;ldi		XL, LOW(MORSE*2)
+	;ldi		XH, HIGH(MORSE*2)
+
+
+LOOP:
+	call GET_CHAR
 	
-	lpm		r21, Z+
-	call	PRINT
-	;adiw	ZH:ZL,1
-	rjmp	GET_CHAR
-	
-PRINT:
+
+	;call GET_MORSE
+
+	lpm r22, Z+
 	out PORTB, r21
-	ret
+
+
+
+	rjmp LOOP
 
 
 
 
+GET_CHAR:
+	
+	lpm		r21, Z+
+	;call	LOOP
+	;adiw	ZH:ZL,1
+	ret
+	
 
 DELAY:
 	ldi		r16,200
@@ -56,8 +67,13 @@ delayInreLoop:
 	ret	
 
 
+TEXT:
+	.db "DATORTEKNIK", $00
+
+
 
 MORSE:
+	.org 141
 	.db $60, $88, $A8, $90, $40, $28, $D0, $08, $20, $78, $B0, $48, $E0, $A0, $F0, $68, $D8, $50, $10, $C0, $30, $18, $70, $98, $B8, $C8 ; Hex av Tecken
 
 

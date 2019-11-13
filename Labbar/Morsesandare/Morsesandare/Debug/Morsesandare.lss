@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm Wed Nov 13 16:55:18 2019
+AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm Wed Nov 13 19:01:35 2019
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\avrasm\inc\m16adef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\avrasm\inc\m16adef.inc'
@@ -895,59 +895,71 @@ AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morses
 000008 e044                      	ldi		r20, 4					; COUNTER 1
 000009 e024                      	ldi		r18, 4					; COUNTER 2
                                  
+                                 
+                                 LOOP:
+00000a 940e 0017                 	call GET_CHAR
+                                 	
+                                 
+                                 	;call GET_MORSE
+                                 
+00000c 9165                      	lpm r22, Z+
+00000d bb58                      	out PORTB, r21
+                                 
+                                 
+                                 
+00000e cffb                      	rjmp LOOP
+                                 
                                  TEXT:
-00000a 4155
-00000b 4f54
-00000c 5452
-00000d 4b45
-00000e 494e
-00000f 004b                      	.db "UATORTEKNIK", $00
-000010 e1e4                      	ldi		ZL, LOW(TEXT*2)
-000011 e0f0                      	ldi		ZH, HIGH(TEXT*2)
+00000f 4144
+000010 4f54
+000011 5452
+000012 4b45
+000013 494e
+000014 004b                      	.db "DATORTEKNIK", $00
+000015 e1ee                      	ldi		ZL, LOW(TEXT*2)
+000016 e0f0                      	ldi		ZH, HIGH(TEXT*2)
+                                 
+                                 
                                  
                                  GET_CHAR:
                                  	
-000012 9155                      	lpm		r21, Z+
-000013 940e 0016                 	call	PRINT
+000017 9155                      	lpm		r21, Z+
+                                 	;call	LOOP
                                  	;adiw	ZH:ZL,1
-000015 cffc                      	rjmp	GET_CHAR
+000018 9508                      	ret
                                  	
-                                 PRINT:
-000016 bb58                      	out PORTB, r21
-000017 9508                      	ret
-                                 
-                                 
-                                 
-                                 
                                  
                                  DELAY:
-000018 ec08                      	ldi		r16,200
+000019 ec08                      	ldi		r16,200
                                  delayYttreLoop:
-000019 e11f                      	ldi		r17,$1F
+00001a e11f                      	ldi		r17,$1F
                                  delayInreLoop:
-00001a 951a                      	dec		r17
-00001b f7f1                      	brne	delayInreLoop
-00001c 950a                      	dec		r16
-00001d f7d9                      	brne	delayYttreLoop
-00001e 9508                      	ret	
+00001b 951a                      	dec		r17
+00001c f7f1                      	brne	delayInreLoop
+00001d 950a                      	dec		r16
+00001e f7d9                      	brne	delayYttreLoop
+00001f 9508                      	ret	
+                                 
                                  
                                  
                                  
                                  MORSE:
-00001f 8860
-000020 90a8
-000021 2840
-000022 08d0
-000023 7820
-000024 48b0
-000025 a0e0
-000026 68f0
-000027 50d8
-000028 c010
-000029 1830
-00002a 9870
-00002b c8b8                      	.db $60, $88, $A8, $90, $40, $28, $D0, $08, $20, $78, $B0, $48, $E0, $A0, $F0, $68, $D8, $50, $10, $C0, $30, $18, $70, $98, $B8, $C8 ; Hex av Tecken
-                                 
+                                 	.org 141
+00008d 8860
+00008e 90a8
+00008f 2840
+000090 08d0
+000091 7820
+000092 48b0
+000093 a0e0
+000094 68f0
+000095 50d8
+000096 c010
+000097 1830
+000098 9870
+000099 c8b8                      	.db $60, $88, $A8, $90, $40, $28, $D0, $08, $20, $78, $B0, $48, $E0, $A0, $F0, $68, $D8, $50, $10, $C0, $30, $18, $70, $98, $B8, $C8 ; Hex av Tecken
+00009a e4a0                      	ldi		XL, LOW(MORSE*2)
+00009b e0b0                      	ldi		XH, HIGH(MORSE*2)
                                  
                                  
                                  
@@ -971,12 +983,12 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega16A" register use summary:
-x  :   0 y  :   0 z  :   1 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   0 y  :   0 z  :   2 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
 r13:   0 r14:   0 r15:   0 r16:   2 r17:   2 r18:   5 r19:   1 r20:   1 
-r21:   3 r22:   2 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
+r21:   3 r22:   3 r23:   0 r24:   0 r25:   0 r26:   1 r27:   1 r28:   0 
 r29:   0 r30:   1 r31:   1 
-Registers used: 10 out of 35 (28.6%)
+Registers used: 12 out of 35 (34.3%)
 
 "ATmega16A" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
@@ -989,7 +1001,7 @@ clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   2 cls   :   0
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :   0 cpse  :   0 dec   :   2 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :   9 lds   :   0 lpm   :   1 lsl   :   0 
+ld    :   0 ldd   :   0 ldi   :  11 lds   :   0 lpm   :   2 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   4 pop   :   0 
 push  :   0 rcall :   0 ret   :   2 reti  :   0 rjmp  :   1 rol   :   0 
@@ -1003,7 +1015,7 @@ Instructions used: 9 out of 113 (8.0%)
 "ATmega16A" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000058     50     38     88   16384   0.5%
+[.cseg] 0x000000 0x000138     56     38     94   16384   0.6%
 [.dseg] 0x000060 0x000060      0      0      0    1024   0.0%
 [.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 

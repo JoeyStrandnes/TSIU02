@@ -23,12 +23,12 @@
  </OUTPUT_FILES>
  <LABELS>
   <SETUP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>11</LINE></SETUP>
-  <TEXT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>27</LINE></TEXT>
-  <GET_CHAR><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>32</LINE></GET_CHAR>
-  <PRINT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>39</LINE></PRINT>
-  <DELAY><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>47</LINE></DELAY>
-  <delayYttreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>49</LINE></delayYttreLoop>
-  <delayInreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>51</LINE></delayInreLoop>
-  <MORSE><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>60</LINE></MORSE>
+  <LOOP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>28</LINE></LOOP>
+  <GET_CHAR><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>48</LINE></GET_CHAR>
+  <TEXT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>41</LINE></TEXT>
+  <DELAY><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>56</LINE></DELAY>
+  <delayYttreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>58</LINE></delayYttreLoop>
+  <delayInreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>60</LINE></delayInreLoop>
+  <MORSE><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>70</LINE></MORSE>
  </LABELS>
 </ASSEMBLER_INFO>
