@@ -10,10 +10,8 @@
 
 SETUP:	
 
-	.db $60, $88, $A8, $90, $40, $28, $D0, $08, $20, $78, $B0, $48, $E0, $A0, $F0, $68, $D8, $50, $10, $C0, $30, $18, $70, $98, $B8, $C8 ; Hex av Tecken
-
-	ldi		r22,$01					; Utport till displayen+scop
-	out		DDRB,r22				; Utport till displayen+scop
+	ldi		r22,$0F					; Utport till Högtalaren
+	out		DDRB,r22				; Utport till Högtalaren
 	
 	ldi		r18, HIGH(RAMEND)
 	out		SPH, r18
@@ -28,14 +26,23 @@ SETUP:
 
 TEXT:
 	.db "DATORTEKNIK", $00
+	ldi		ZL, LOW(TEXT*2)
+	ldi		ZH, HIGH(TEXT*2)
 
-READ:
-	ldi ZH, HIGH(TEXT*2)
-	ldi ZL, LOW(TEXT*2)
-	lpm r21, Z+
-	;Call Something
-	;lpm r21, Z
-	brne READ
+GET_CHAR:
+	
+	lpm		r21, Z+
+	call	PRINT
+	;adiw	ZH:ZL,1
+	rjmp	GET_CHAR
+	
+PRINT:
+	out PORTB, r21
+	ret
+
+
+
+
 
 DELAY:
 	ldi		r16,200
@@ -48,6 +55,10 @@ delayInreLoop:
 	brne	delayYttreLoop
 	ret	
 
+
+
+MORSE:
+	.db $60, $88, $A8, $90, $40, $28, $D0, $08, $20, $78, $B0, $48, $E0, $A0, $F0, $68, $D8, $50, $10, $C0, $30, $18, $70, $98, $B8, $C8 ; Hex av Tecken
 
 
 
