@@ -22,13 +22,26 @@
   <FILE>Morsesandare.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <SETUP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>11</LINE></SETUP>
-  <LOOP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>28</LINE></LOOP>
-  <GET_CHAR><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>48</LINE></GET_CHAR>
-  <TEXT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>41</LINE></TEXT>
-  <DELAY><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>56</LINE></DELAY>
-  <delayYttreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>58</LINE></delayYttreLoop>
-  <delayInreLoop><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>60</LINE></delayInreLoop>
-  <MORSE><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>70</LINE></MORSE>
+  <SETUP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>7</LINE></SETUP>
+  <MESSAGE><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>121</LINE></MESSAGE>
+  <MORSE><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>21</LINE></MORSE>
+  <GET_CHAR><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>37</LINE></GET_CHAR>
+  <END_OF_LINE><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>32</LINE></END_OF_LINE>
+  <LOOKUP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>46</LINE></LOOKUP>
+  <SEND><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>63</LINE></SEND>
+  <NO_BEEP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>101</LINE></NO_BEEP>
+  <SPACE><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>41</LINE></SPACE>
+  <BTAB><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>125</LINE></BTAB>
+  <NO_CARRY_TO_ZH><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>56</LINE></NO_CARRY_TO_ZH>
+  <VALID_CHAR><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>68</LINE></VALID_CHAR>
+  <DONE_WITH_SPACE><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>82</LINE></DONE_WITH_SPACE>
+  <GET_BIT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>85</LINE></GET_BIT>
+  <DIT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>74</LINE></DIT>
+  <DAT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>71</LINE></DAT>
+  <BEEP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>89</LINE></BEEP>
+  <BEEP_LOOP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>91</LINE></BEEP_LOOP>
+  <DELAY><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>111</LINE></DELAY>
+  <NO_BEEP_LOOP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>103</LINE></NO_BEEP_LOOP>
+  <DELAY_LOOP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Morsesandare\Morsesandare\main.asm</FILE><LINE>113</LINE></DELAY_LOOP>
  </LABELS>
 </ASSEMBLER_INFO>

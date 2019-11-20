@@ -13,7 +13,11 @@ SETUP:
 	out	DDRB, r16
 	ldi	ZL, LOW(MESSAGE*2)
 	ldi	ZH, HIGH(MESSAGE*2)
+
 	.def N=r18
+	.equ SPEED = 50	
+	.equ PITCH = 255
+
 MORSE:
 	call	GET_CHAR
 	cpi		r21,$00
@@ -33,91 +37,90 @@ END_OF_LINE:
 GET_CHAR:
 	lpm	r21, Z+
 	ret
-	;pop Z+??
+;---------------------------------------------------------------------
+SPACE:
+	ldi N, $02
+	call NO_BEEP
+	ret
 ;---------------------------------------------------------------------
 LOOKUP:
 	push	r21
 	push	ZL
 	push	ZH
-	ldi	ZH, HIGH(BTAB*2)
-	ldi	ZL, LOW(BTAB*2)
+	ldi		ZH, HIGH(BTAB*2)
+	ldi		ZL, LOW(BTAB*2)
 	subi	r21, $41 ;gör om till en offset i alfabetet
-	add	ZL, r21
+	add		ZL, r21
 	brcc	NO_CARRY_TO_ZH
-	inc	ZH
+	inc		ZH
 NO_CARRY_TO_ZH:
 	lpm	r22, Z
-
 	pop	ZH
 	pop	ZL
 	pop	r21
 	ret
 ;----------------------------------------------------------------------	
 SEND:
-	call	GET_BIT
+	cpi		r22, $FF
+	brne	VALID_CHAR
+	call	SPACE
+	rjmp	DONE_WITH_SPACE
+VALID_CHAR:
+	lsl		r22
 	brcc	DIT
 DAT:
-	ldi		N,$02
+	;ldi		N,$02
+	call	BEEP
 	call	BEEP
 DIT:
-	ldi		N,$01
+	;ldi		N,$01
 	call	BEEP
-TEST:
-	ldi		N,$01
-	call	NO_BEEP;PAUS mellan varje dit/dat
+	;ldi N, $01
+	call NO_BEEP ; EN N Tystnad efter varje dit/dat
 
 	cpi		r22,$80
 	brne	SEND
+DONE_WITH_SPACE:
 	ret
 ;----------------------------------------------------------------------
-GET_BIT:
-	lsl	r22
-	ret
-;---------------------------------------------------------------------
+
 BEEP:
-	ldi		r16,$FF
-	out		DDRB,r16
+	ldi		r17, SPEED
+BEEP_LOOP:
+	sbi		PORTB, 0
 	call	DELAY
-	dec		N
-	breq	BEEP_DONE
-	rjmp	BEEP
-BEEP_DONE:
+	cbi		PORTB, 0
+	call	DELAY
+	dec		r17
+	brne	BEEP_LOOP
 	ret
 ;--------------------------------------------------------------------
 
 NO_BEEP:
-	ldi		r16,$00
-	out		DDRB,r16
+	ldi		r17,SPEED
+NO_BEEP_LOOP:
+	cbi	PORTB, 0
 	call	DELAY
-	dec		N
-	breq	NO_BEEP_DONE
-	rjmp	NO_BEEP
-NO_BEEP_DONE:
+	call	DELAY
+	dec		r17
+	brne	NO_BEEP_LOOP
 	ret
 ;---------------------------------------------------------------------
 DELAY:
-	ldi		r16,200 ;200 1 tidsenhet lång
-delayYttreLoop:
-	ldi		r17,$FF;1F
-delayInreLoop:
-	ldi		r19,$FF
-	out		PORTB,r19
-	dec		r17
-	ldi		r19,$00
-	out		PORTB,r19
-	brne	delayInreLoop
+	ldi		r16,PITCH 
+DELAY_LOOP:
 	dec		r16
-	brne	delayYttreLoop
+	brne	DELAY_LOOP
 	ret
 ;---------------------------------------------------------------------
 
 
 .org $0100
-MESSAGE:
-	.db "DATORTEKNIK", $00
+MESSAGE:	;Meddelande
+	.db " DATOR TEKNIK", $00
 
 .org $0150
-BTAB:
+BTAB:		;Morse tabell
 	.db $60, $88, $A8, $90, $40, $28, $D0, $08, $20, $78, $B0, $48, $E0, $A0, $F0, $68, $D8, $50, $10, $C0, $30, $18, $70, $98, $B8, $C8
 
 
