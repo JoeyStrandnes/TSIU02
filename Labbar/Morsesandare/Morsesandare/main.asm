@@ -15,22 +15,22 @@ SETUP:
 	ldi	ZH, HIGH(MESSAGE*2)
 
 	.def N=r18
-	.equ SPEED = 50	
+	.equ SPEED = 100	
 	.equ PITCH = 255
 
 MORSE:
 	call	GET_CHAR
 	cpi		r21,$00
 	breq	END_OF_LINE ; loopar tills vi stöter på $00-då till END_OF_LINE
-	
 	call	LOOKUP
 	call	SEND
+
 	ldi		N,$02
 	call	NO_BEEP ; Nästa bokstav kräver 3N tystnad innan den sänds. Har gjort en innan i SEND 
 	jmp		MORSE 
 
 END_OF_LINE:
-	ldi		N,$07
+	ldi		N,$10
 	call	NO_BEEP
 	jmp		SETUP
 ;---------------------------------------------------------------------
@@ -68,14 +68,12 @@ SEND:
 VALID_CHAR:
 	lsl		r22
 	brcc	DIT
-DAT:
-	;ldi		N,$02
-	call	BEEP
-	call	BEEP
+	ldi		N,$02
+	call	BEEP ;
 DIT:
-	;ldi		N,$01
+	ldi		N,$01
 	call	BEEP
-	;ldi N, $01
+	ldi N, $01
 	call NO_BEEP ; EN N Tystnad efter varje dit/dat
 
 	cpi		r22,$80
@@ -93,6 +91,8 @@ BEEP_LOOP:
 	call	DELAY
 	dec		r17
 	brne	BEEP_LOOP
+	dec		N
+	brne	BEEP
 	ret
 ;--------------------------------------------------------------------
 
@@ -104,6 +104,8 @@ NO_BEEP_LOOP:
 	call	DELAY
 	dec		r17
 	brne	NO_BEEP_LOOP
+	dec		N
+	brne	NO_BEEP
 	ret
 ;---------------------------------------------------------------------
 DELAY:
@@ -117,9 +119,9 @@ DELAY_LOOP:
 
 .org $0100
 MESSAGE:	;Meddelande
-	.db " DATOR TEKNIK", $00
+	.db " SOS SOS", $00
 
-.org $0150
+.org $0200
 BTAB:		;Morse tabell
 	.db $60, $88, $A8, $90, $40, $28, $D0, $08, $20, $78, $B0, $48, $E0, $A0, $F0, $68, $D8, $50, $10, $C0, $30, $18, $70, $98, $B8, $C8
 
