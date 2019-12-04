@@ -25,6 +25,8 @@ SETUP:
 	.def TIME = r22
 	ldi TIME, 14
 
+	.def COUNTER = r18
+
 	ldi	r16, HIGH(RAMEND)
 	out	SPH, r16
 	ldi	r16, LOW(RAMEND)
@@ -45,11 +47,17 @@ SETUP:
 	TIME_VAR:
 	.byte 0x04
 
-	.cseg
 
+	.cseg
+	
+	
 	ldi YL, LOW(TIME_VAR)
 	ldi YH, HIGH(TIME_VAR)
-
+	ldi r16,0x00
+	std Y+0,r16
+	std Y+1,r16
+	std Y+2,r16
+	std Y+3,r16
 
 TIMER1_INIT: ;16-bit timer 1 set as an overflow timer 
 	
@@ -77,7 +85,7 @@ TIMER1_INIT: ;16-bit timer 1 set as an overflow timer
 
 TIMER0_INIT:
 
-	ldi r16, (1<<CS02)|(0<<CS01)|(0<<CS00) // Prescaler 256
+	ldi r16, (0<<CS02)|(1<<CS01)|(0<<CS00) // Prescaler 256
 	out TCCR0, r16
 	
 	in r16, TIMSK
@@ -115,52 +123,68 @@ ISR_TIMER0:
 	reti
 
 DISPLAY_TIME:
-	
+	 ldi r16, 0x00
+	// out PORTB, r16 //Så att inte fel siffra visas tills att
+	 out PORTD, COUNTER
+	 inc COUNTER
+	 cpi COUNTER, 0x04
+	 brne MAX_NUM
+	 clr COUNTER
+	 
+MAX_NUM:
 
-
+	add YL,COUNTER
+	ld  r16, Y
+	push r16
+	add ZL, r16
+	lpm r16, Z
+	out PORTB, r16
+	pop r16
+	sub ZL,r16
+	sub YL, COUNTER
 	ret
 
 TIMER_COUNTER:
 	
 	// Sekunder
-	ldd r17, Y+3
+	ldd r17, Y+0
 	inc r17 
-	std Y+3, r17
+	std Y+0, r17
 	cpi r17, 10
 	brne NOT_10
 
 	// Tiotal sek
 	clr r17
-	std Y+3, r17
-	ldd r17, Y+2
+	std Y+0, r17
+	ldd r17, Y+1
 	inc r17
-	std Y+2, r17
+	std Y+1, r17
 	cpi r17, 6
 	brne NOT_60
 
 	// Minuter
 	clr r17
-	std Y+2, r17
-	ldd r17, Y+1
-	inc r17
 	std Y+1, r17
+	ldd r17, Y+2
+	inc r17
+	std Y+2, r17
 	cpi r17, 10
 	brne NOT_10
 
 	// Tiotal Minuter
 	clr r17
-	std Y+1, r17
-	ldd r17, Y+0
+	std Y+2, r17
+	ldd r17, Y+3
 	inc r17
-	std Y+0, r17
+	std Y+3, r17
 	cpi r17, 6
 	brne NOT_60
 	clr r17
-	std Y+0, r17
+	std Y+3, r17
 
 NOT_10:
 
-NOT_60:
+NOT_60:			 
 
 	ret
 
