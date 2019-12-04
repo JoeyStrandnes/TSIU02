@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm Tue Dec 03 11:37:31 2019
+AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm Wed Dec 04 12:57:16 2019
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m16adef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m16adef.inc'
@@ -871,9 +871,10 @@ AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digita
                                  
                                  
                                  
-                                 16-Bit Timer test
-                                 Timer for real time counting/ keeping time
+                                 Multiplex 4x7-segment display with internal timers for time keeping
                                  
+                                 16-bit timer overflow for counting time ~1Hz
+                                 8-bit timer overflow for multiplexing segment display ~15kHz
                                  
                                  */
                                  
@@ -881,7 +882,12 @@ AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digita
 000000 940c 0030                 jmp SETUP
                                  
                                  .org 0x10 
-000010 940c 0055                 jmp ISR_TIMER1
+000010 940c 0052                 jmp ISR_TIMER1
+                                 
+                                 .org 0x12
+000012 940c 005b                 jmp ISR_TIMER0
+                                 
+                                 
                                  
                                  .org 0x30
                                  
@@ -904,87 +910,142 @@ AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digita
 000039 e0f4                      	ldi ZH, HIGH(NUMBER*2)
 00003a e0e0                      	ldi ZL, LOW(NUMBER*2)
                                  
+                                 	//Allocated 4 bytes in memory
+                                 	.dseg
+                                 	.org 0x60
+                                 	TIME_VAR:
+000060                           	.byte 0x04
+                                 
+                                 	.cseg
+                                 
+00003b e6c0                      	ldi YL, LOW(TIME_VAR)
+00003c e0d0                      	ldi YH, HIGH(TIME_VAR)
+                                 
+                                 
                                  TIMER1_INIT: ;16-bit timer 1 set as an overflow timer 
                                  	
                                  	; Setting counter mode
-00003b e108                      	ldi r16, (1<<WGM13)|(1<<WGM12)
-00003c bd0e                      	out TCCR1B, r16
+00003d e108                      	ldi r16, (1<<WGM13)|(1<<WGM12)
+00003e bd0e                      	out TCCR1B, r16
                                  
-00003d e002                      	ldi r16, (1<<WGM11)|(0<<WGM10) 
-00003e bd0f                      	out TCCR1A, r16
+00003f e002                      	ldi r16, (1<<WGM11)|(0<<WGM10) 
+000040 bd0f                      	out TCCR1A, r16
                                  
                                  	; Setting max counter value before overflow
-00003f ef0f                      	ldi r16, 0xFF 
-000040 bd07                      	out ICR1H, r16
-000041 ef0f                      	ldi r16, 0xFF
-000042 bd06                      	out ICR1L, r16
+000041 e30d                      	ldi r16, 0x3D
+000042 bd07                      	out ICR1H, r16
+000043 e008                      	ldi r16, 0x08
+000044 bd06                      	out ICR1L, r16
                                  
                                  	; Setting prescaling and interrupt
-000043 e005                      	ldi r16,(1<<CS12)|(0<<CS11)|(1<<CS10) ;Prescaler set to F_CPU/1024 (S:108) MED 1024 OCH  ICR1 = FFFF 1046 ms
-000044 bd0e                      	out TCCR1B, r16
-000045 e004                      	ldi r16, 1<<TOIE1
-000046 bf09                      	out TIMSK, r16
-000047 9478                      	sei
+000045 b50e                      	in r16, TCCR1B  
+000046 6003                      	ori r16,(0<<CS12)|(1<<CS11)|(1<<CS10) ;Prescaler set to F_CPU/64 (S:108)
+                                 
+000047 bd0e                      	out TCCR1B, r16
+000048 e004                      	ldi r16, 1<<TOIE1
+000049 bf09                      	out TIMSK, r16
+                                 	
                                  
                                  TIMER0_INIT:
                                  
-000048 e005                      	ldi r16, (1<<CS02) | (1<<CS00)
-000049 bf03                      	out TCCR0, r16
+00004a e004                      	ldi r16, (1<<CS02)|(0<<CS01)|(0<<CS00) // Prescaler 256
+00004b bf03                      	out TCCR0, r16
                                  	
+00004c b709                      	in r16, TIMSK
+00004d 6001                      	ori r16, (1<<TOIE0)
+                                 
+00004e bf09                      	out TIMSK, r16
+00004f 9478                      	sei
                                  
                                  MAIN:
-                                 	;call loop
-                                 
-                                 
-00004a 9105                      	lpm r16, Z+
-00004b bb08                      	out PORTB, r16
-00004c 940e 0061                 	call MULTIPLEX
-00004e 940e 0068                 	call LOOP
-000050 3607                      	cpi r16, 0x67
-000051 f411                      	brne	NOT_9
-000052 e0f4                      	ldi ZH, HIGH(NUMBER*2)
-000053 e0e0                      	ldi ZL, LOW(NUMBER*2)
-                                 NOT_9:
-000054 cff5                      	rjmp MAIN
+000050 0000                      	nop
+000051 cffe                      	rjmp MAIN
                                  	
                                  
                                  
                                  ISR_TIMER1:
-000055 930f                      	push r16
-000056 b70f                      	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
-000057 930f                      	push r16
-000058 940e 005e                 	call TIMER_COUNTER
-00005a 910f                      	pop r16
-00005b bf0f                      	out SREG,r16
-00005c 910f                      	pop r16
-00005d 9518                      	reti
+000052 930f                      	push r16
+000053 b70f                      	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
+000054 930f                      	push r16
+000055 940e 0065                 	call TIMER_COUNTER
+000057 910f                      	pop r16
+000058 bf0f                      	out SREG,r16
+000059 910f                      	pop r16
+00005a 9518                      	reti
                                  	
+                                 ISR_TIMER0:
+00005b 930f                      	push r16
+00005c b70f                      	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
+00005d 930f                      	push r16
+                                 
+00005e 940e 0064                 	call DISPLAY_TIME
+                                 
+000060 910f                      	pop r16
+000061 bf0f                      	out SREG,r16
+000062 910f                      	pop r16
+000063 9518                      	reti
+                                 
+                                 DISPLAY_TIME:
+                                 	
+                                 
+                                 
+000064 9508                      	ret
+                                 
                                  TIMER_COUNTER:
-00005e 956a                      	dec TIME
-00005f f351                      	breq MAIN
-000060 9508                      	ret
+                                 	
+                                 	// Sekunder
+000065 811b                      	ldd r17, Y+3
+000066 9513                      	inc r17 
+000067 831b                      	std Y+3, r17
+000068 301a                      	cpi r17, 10
+000069 f4b9                      	brne NOT_10
+                                 
+                                 	// Tiotal sek
+00006a 2711                      	clr r17
+00006b 831b                      	std Y+3, r17
+00006c 811a                      	ldd r17, Y+2
+00006d 9513                      	inc r17
+00006e 831a                      	std Y+2, r17
+00006f 3016                      	cpi r17, 6
+000070 f481                      	brne NOT_60
+                                 
+                                 	// Minuter
+000071 2711                      	clr r17
+000072 831a                      	std Y+2, r17
+000073 8119                      	ldd r17, Y+1
+000074 9513                      	inc r17
+000075 8319                      	std Y+1, r17
+000076 301a                      	cpi r17, 10
+000077 f449                      	brne NOT_10
+                                 
+                                 	// Tiotal Minuter
+000078 2711                      	clr r17
+000079 8319                      	std Y+1, r17
+00007a 8118                      	ldd r17, Y+0
+00007b 9513                      	inc r17
+00007c 8318                      	std Y+0, r17
+00007d 3016                      	cpi r17, 6
+00007e f411                      	brne NOT_60
+00007f 2711                      	clr r17
+000080 8318                      	std Y+0, r17
+                                 
+                                 NOT_10:
+                                 
+                                 NOT_60:
+                                 
+000081 9508                      	ret
                                  
                                  
+                                 /*
                                  MULTIPLEX:
-000061 e044                      	ldi r20, 0x4
+                                 	ldi r20, 0x4
                                  LOOP420:
-000062 940e 0068                 	call LOOP
-000064 954a                      	dec r20
-000065 bb42                      	out PORTD, r20
-000066 f7d9                      	brne LOOP420	
-000067 9508                      	ret  
-                                 
-                                 
-                                 LOOP: ;TEST LOOP for timer
-000068 e025                          ldi  r18, 5
-000069 e332                          ldi  r19, 50
-00006a 953a                      L1: dec  r19
-00006b f7f1                          brne L1
-00006c 952a                          dec  r18
-00006d f7e1                          brne L1
-00006e 0000                          nop
-00006f 9508                      	ret
-                                 
+                                 	call LOOP
+                                 	dec r20
+                                 	out PORTD, r20
+                                 	brne LOOP420	
+                                 	ret  
+                                 */
                                  
                                  .org 0x0200 
 000200 063f
@@ -1010,40 +1071,40 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega16A" register use summary:
-x  :   0 y  :   0 z  :   1 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   0 y  :  12 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  31 r17:   0 r18:   2 r19:   2 r20:   3 
-r21:   0 r22:   2 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
-r29:   0 r30:   2 r31:   2 
+r13:   0 r14:   0 r15:   0 r16:  38 r17:  24 r18:   0 r19:   0 r20:   0 
+r21:   0 r22:   1 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   1 
+r29:   1 r30:   1 r31:   1 
 Registers used: 8 out of 35 (22.9%)
 
 "ATmega16A" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :   1 brge  :   0 brhc  :   0 
+brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   4 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   4 cbi   :   0 cbr   :   0 
-clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   2 cbi   :   0 cbr   :   0 
+clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   4 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   1 cpse  :   0 dec   :   4 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   0 jmp   :   2 
-ld    :   0 ldd   :   0 ldi   :  19 lds   :   0 lpm   :   1 lsl   :   0 
+cpi   :   4 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   4 inc   :   4 jmp   :   3 
+ld    :   0 ldd   :   4 ldi   :  15 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   1 or    :   0 ori   :   0 out   :  14 pop   :   2 
-push  :   2 rcall :   0 ret   :   3 reti  :   1 rjmp  :   1 rol   :   0 
+neg   :   0 nop   :   1 or    :   0 ori   :   2 out   :  14 pop   :   4 
+push  :   4 rcall :   0 ret   :   2 reti  :   2 rjmp  :   1 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   0 
+sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   8 sts   :   0 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 17 out of 113 (15.0%)
+Instructions used: 19 out of 113 (16.8%)
 
 "ATmega16A" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00040a    136     10    146   16384   0.9%
-[.dseg] 0x000060 0x000060      0      0      0    1024   0.0%
+[.cseg] 0x000000 0x00040a    176     10    186   16384   1.1%
+[.dseg] 0x000060 0x000064      0      4      4    1024   0.4%
 [.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 
 Assembly complete, 0 errors, 0 warnings

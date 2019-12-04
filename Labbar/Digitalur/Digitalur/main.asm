@@ -1,8 +1,9 @@
 /*
 
-16-Bit Timer test
-Timer for real time counting/ keeping time
+Multiplex 4x7-segment display with internal timers for time keeping
 
+16-bit timer overflow for counting time ~1Hz
+8-bit timer overflow for multiplexing segment display ~15kHz
 
 */
 
@@ -39,17 +40,15 @@ SETUP:
 	ldi ZL, LOW(NUMBER*2)
 
 	//Allocated 4 bytes in memory
-	.cseg
-	TIME_VAR:
-	.org 0x60
-	.byte 0x04
 	.dseg
+	.org 0x60
+	TIME_VAR:
+	.byte 0x04
 
-	ldi r16, LOW(TIME_VAR)
-	out XL, r16
+	.cseg
 
-	ldi r16, HIGH(TIME_VAR)
-	out XH, r16
+	ldi YL, LOW(TIME_VAR)
+	ldi YH, HIGH(TIME_VAR)
 
 
 TIMER1_INIT: ;16-bit timer 1 set as an overflow timer 
@@ -62,13 +61,15 @@ TIMER1_INIT: ;16-bit timer 1 set as an overflow timer
 	out TCCR1A, r16
 
 	; Setting max counter value before overflow
-	ldi r16, 0xFF 
+	ldi r16, 0x3D
 	out ICR1H, r16
-	ldi r16, 0xFF
+	ldi r16, 0x08
 	out ICR1L, r16
 
 	; Setting prescaling and interrupt
-	ldi r16,(1<<CS12)|(0<<CS11)|(1<<CS10) ;Prescaler set to F_CPU/1024 (S:108) MED 1024 OCH  ICR1 = FFFF 1046 ms
+	in r16, TCCR1B  
+	ori r16,(0<<CS12)|(1<<CS11)|(1<<CS10) ;Prescaler set to F_CPU/64 (S:108)
+
 	out TCCR1B, r16
 	ldi r16, 1<<TOIE1
 	out TIMSK, r16
@@ -76,23 +77,17 @@ TIMER1_INIT: ;16-bit timer 1 set as an overflow timer
 
 TIMER0_INIT:
 
-	ldi r16, (1<<CS02) | (1<<CS00) // Prescaler 1024
+	ldi r16, (1<<CS02)|(0<<CS01)|(0<<CS00) // Prescaler 256
 	out TCCR0, r16
+	
+	in r16, TIMSK
+	ori r16, (1<<TOIE0)
+
+	out TIMSK, r16
 	sei
 
 MAIN:
-	;call loop
-
-
-	lpm  r16, Z+
-	out  PORTB, r16
-	call MULTIPLEX
-	call LOOP
-	cpi  r16, 0x67
-	brne NOT_9
-	ldi  ZH, HIGH(NUMBER*2)
-	ldi  ZL, LOW(NUMBER*2)
-NOT_9:
+	nop
 	rjmp MAIN
 	
 
@@ -119,12 +114,54 @@ ISR_TIMER0:
 	pop r16
 	reti
 
+DISPLAY_TIME:
+	
 
+
+	ret
 
 TIMER_COUNTER:
 	
-	dec TIME
-	breq MAIN
+	// Sekunder
+	ldd r17, Y+3
+	inc r17 
+	std Y+3, r17
+	cpi r17, 10
+	brne NOT_10
+
+	// Tiotal sek
+	clr r17
+	std Y+3, r17
+	ldd r17, Y+2
+	inc r17
+	std Y+2, r17
+	cpi r17, 6
+	brne NOT_60
+
+	// Minuter
+	clr r17
+	std Y+2, r17
+	ldd r17, Y+1
+	inc r17
+	std Y+1, r17
+	cpi r17, 10
+	brne NOT_10
+
+	// Tiotal Minuter
+	clr r17
+	std Y+1, r17
+	ldd r17, Y+0
+	inc r17
+	std Y+0, r17
+	cpi r17, 6
+	brne NOT_60
+	clr r17
+	std Y+0, r17
+
+NOT_10:
+
+NOT_60:
+
 	ret
 
 
@@ -137,17 +174,6 @@ LOOP420:
 	out PORTD, r20
 	brne LOOP420	
 	ret  
-
-
-LOOP: ;TEST LOOP for timer
-    ldi  r18, 5
-    ldi  r19, 50
-L1: dec  r19
-    brne L1
-    dec  r18
-    brne L1
-    nop
-	ret
 */
 
 .org 0x0200 
