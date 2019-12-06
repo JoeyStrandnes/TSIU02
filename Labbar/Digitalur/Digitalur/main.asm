@@ -124,7 +124,6 @@ ISR_TIMER0:
 
 DISPLAY_TIME:
 	 ldi r16, 0x00
-	// out PORTB, r16 //Så att inte fel siffra visas tills att
 	 out PORTD, COUNTER
 	 inc COUNTER
 	 cpi COUNTER, 0x04
@@ -144,6 +143,46 @@ MAX_NUM:
 	sub YL, COUNTER
 	ret
 
+TIMER_COUNTER:
+	push YL //Sparar Y-pekaren i "noll-läge" dvs offset 0, rad 60 SRAM
+	
+	call LOAD_STORE10;DAGS ATT ÖKA 1-tals-sekund
+	brne DONE_WITH_INC ;LOAD_STORE sätter Z-flagga då den kommit upp i 6 / 10
+	inc YL 
+	call LOAD_STORE6;DAGS ATT ÖKA 10-tals-sekund 
+	brne DONE_WITH_INC
+	inc YL 
+	call LOAD_STORE10;DAGS ATT ÖKA 1-tals-minut
+	brne DONE_WITH_INC
+	inc YL 
+	call LOAD_STORE6;DAGS ATT ÖKA 10-tals-minut
+
+DONE_WITH_INC:
+	pop YL
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+LOAD_STORE10:
+	ld r17, Y
+	inc r17
+	cpi r17, 10
+	brne NOTT_10
+	clr r17
+NOTT_10:
+	st Y, r17
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+LOAD_STORE6:
+	ld r17, Y
+	inc r17
+	cpi r17, 6
+	brne NOTT_6
+	clr r17
+NOTT_6:
+	st Y, r17
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+/*
 TIMER_COUNTER:
 	
 	// Sekunder
@@ -187,19 +226,7 @@ NOT_10:
 NOT_60:			 
 
 	ret
-
-
-/*
-MULTIPLEX:
-	ldi r20, 0x4
-LOOP420:
-	call LOOP
-	dec r20
-	out PORTD, r20
-	brne LOOP420	
-	ret  
-*/
-
+ */
 .org 0x0200 
 Number: .db 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7C, 0x07, 0x7F, 0x67
 
