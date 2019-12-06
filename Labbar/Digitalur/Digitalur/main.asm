@@ -16,15 +16,11 @@ jmp ISR_TIMER1
 .org 0x12
 jmp ISR_TIMER0
 
-
-
 .org 0x30
 
 SETUP: 
-	
-	.def TIME = r22
-	ldi TIME, 14
 
+	.equ NUMBER_OF_DISPLAYS = 4
 	.def COUNTER = r18
 
 	ldi	r16, HIGH(RAMEND)
@@ -41,24 +37,37 @@ SETUP:
 	ldi ZH, HIGH(NUMBER*2)
 	ldi ZL, LOW(NUMBER*2)
 
-	//Allocated 4 bytes in memory
+	//Allocated N bytes in memory
 	.dseg
 	.org 0x60
-	TIME_VAR:
-	.byte 0x04
-
+TIME_VAR:
+	.byte NUMBER_OF_DISPLAYS
+	.byte	CURR_DISP
 
 	.cseg
-	
-	
 	ldi YL, LOW(TIME_VAR)
 	ldi YH, HIGH(TIME_VAR)
-	ldi r16,0x00
-	std Y+0,r16
-	std Y+1,r16
-	std Y+2,r16
-	std Y+3,r16
 
+	ldi r16,0x00
+	ldi r17, NUMBER_OF_DISPLAYS
+	
+	call CLEAR_N_BYTES
+	call TIMER1_INIT
+	call TIMER0_INIT
+	sei
+	jmp main
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+CLEAR_N_BYTES:
+	push YL
+	push YH
+	st Y+, r16 //STORE WITH ZERO
+	dec r17
+	;cpi r17, 0
+	brne CLEAR_N_BYTES
+	pop YH
+	pop YL
+	ret
 TIMER1_INIT: ;16-bit timer 1 set as an overflow timer 
 	
 	; Setting counter mode
@@ -81,18 +90,15 @@ TIMER1_INIT: ;16-bit timer 1 set as an overflow timer
 	out TCCR1B, r16
 	ldi r16, 1<<TOIE1
 	out TIMSK, r16
-	
+	ret
 
 TIMER0_INIT:
-
 	ldi r16, (0<<CS02)|(1<<CS01)|(0<<CS00) // Prescaler 256
-	out TCCR0, r16
-	
+	out TCCR0, r16	
 	in r16, TIMSK
 	ori r16, (1<<TOIE0)
-
 	out TIMSK, r16
-	sei
+	ret
 
 MAIN:
 	nop
@@ -103,35 +109,34 @@ MAIN:
 ISR_TIMER1:
 	push r16
 	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
-	push r16
+	;push r16
 	call TIMER_COUNTER
-	pop r16
+	;pop r16
 	out SREG,r16
 	pop r16
 	reti
-	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 ISR_TIMER0:
 	push r16
 	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
 	push r16
-
 	call DISPLAY_TIME
-
 	pop r16
 	out SREG,r16
 	pop r16
 	reti
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 DISPLAY_TIME:
 	 ldi r16, 0x00
+	 inc COUNTER ; till SRAM
+	 cpi COUNTER, NUMBER_OF_DISPLAYS
 	 out PORTD, COUNTER
-	 inc COUNTER
-	 cpi COUNTER, 0x04
-	 brne MAX_NUM
+	 brne NOT_MAX_MODULO
 	 clr COUNTER
-	 
-MAX_NUM:
-
+	 	 
+NOT_MAX_MODULO:
 	add YL,COUNTER
 	ld  r16, Y
 	push r16
@@ -139,94 +144,57 @@ MAX_NUM:
 	lpm r16, Z
 	out PORTB, r16
 	pop r16
-	sub ZL,r16
-	sub YL, COUNTER
+	sub ZL,r16	; !!
+	sub YL, COUNTER	
 	ret
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 TIMER_COUNTER:
 	push YL //Sparar Y-pekaren i "noll-läge" dvs offset 0, rad 60 SRAM
-	
+	ldi		YL,TIME_VAR
+
 	call LOAD_STORE10;DAGS ATT ÖKA 1-tals-sekund
 	brne DONE_WITH_INC ;LOAD_STORE sätter Z-flagga då den kommit upp i 6 / 10
-	inc YL 
+	inc  YL 
 	call LOAD_STORE6;DAGS ATT ÖKA 10-tals-sekund 
 	brne DONE_WITH_INC
-	inc YL 
+	inc  YL 
 	call LOAD_STORE10;DAGS ATT ÖKA 1-tals-minut
 	brne DONE_WITH_INC
-	inc YL 
+	inc  YL 
 	call LOAD_STORE6;DAGS ATT ÖKA 10-tals-minut
 
-DONE_WITH_INC:
+	DONE_WITH_INC:
 	pop YL
 	ret
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 LOAD_STORE10:
 	ld r17, Y
 	inc r17
 	cpi r17, 10
-	brne NOTT_10
+	brne NOT_10
 	clr r17
-NOTT_10:
+NOT_10:
 	st Y, r17
 	ret
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 LOAD_STORE6:
 	ld r17, Y
 	inc r17
 	cpi r17, 6
-	brne NOTT_6
+	brne NOT_6
 	clr r17
-NOTT_6:
+NOT_6:
 	st Y, r17
 	ret
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-/*
-TIMER_COUNTER:
-	
-	// Sekunder
-	ldd r17, Y+0
-	inc r17 
-	std Y+0, r17
-	cpi r17, 10
-	brne NOT_10
 
-	// Tiotal sek
-	clr r17
-	std Y+0, r17
-	ldd r17, Y+1
-	inc r17
-	std Y+1, r17
-	cpi r17, 6
-	brne NOT_60
-
-	// Minuter
-	clr r17
-	std Y+1, r17
-	ldd r17, Y+2
-	inc r17
-	std Y+2, r17
-	cpi r17, 10
-	brne NOT_10
-
-	// Tiotal Minuter
-	clr r17
-	std Y+2, r17
-	ldd r17, Y+3
-	inc r17
-	std Y+3, r17
-	cpi r17, 6
-	brne NOT_60
-	clr r17
-	std Y+3, r17
-
-NOT_10:
-
-NOT_60:			 
-
-	ret
- */
 .org 0x0200 
 Number: .db 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7C, 0x07, 0x7F, 0x67
 
+
+
+
+
+
+// 200 RADER :D
