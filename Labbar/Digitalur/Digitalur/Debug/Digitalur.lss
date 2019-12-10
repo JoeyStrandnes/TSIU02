@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm Fri Dec 06 10:02:55 2019
+AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm Tue Dec 10 11:52:22 2019
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m16adef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m16adef.inc'
@@ -882,222 +882,213 @@ AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digita
 000000 940c 0030                 jmp SETUP
                                  
                                  .org 0x10 
-000010 940c 0057                 jmp ISR_TIMER1
+000010 940c 0065                 jmp ISR_TIMER1
                                  
                                  .org 0x12
-000012 940c 0060                 jmp ISR_TIMER0
-                                 
-                                 
+000012 940c 006c                 jmp ISR_TIMER0
                                  
                                  .org 0x30
                                  
                                  SETUP: 
-                                 	
-                                 	.def TIME = r22
-000030 e06e                      	ldi TIME, 14
                                  
+                                 	.equ NUMBER_OF_DISPLAYS = 4
                                  	.def COUNTER = r18
                                  
-000031 e004                      	ldi	r16, HIGH(RAMEND)
-000032 bf0e                      	out	SPH, r16
-000033 e50f                      	ldi	r16, LOW(RAMEND)
-000034 bf0d                      	out	SPL, r16
+000030 e004                      	ldi	r16, HIGH(RAMEND)
+000031 bf0e                      	out	SPH, r16
+000032 e50f                      	ldi	r16, LOW(RAMEND)
+000033 bf0d                      	out	SPL, r16
                                  
-000035 ef0f                      	ldi r16, 0xFF
-000036 bb07                      	out DDRB, r16
+000034 ef0f                      	ldi r16, 0xFF
+000035 bb07                      	out DDRB, r16
                                  
-000037 e003                      	ldi r16, 0x03
-000038 bb01                      	out DDRD, r16
+000036 e003                      	ldi r16, 0x03
+000037 bb01                      	out DDRD, r16
                                  
-000039 e0f4                      	ldi ZH, HIGH(NUMBER*2)
-00003a e0e0                      	ldi ZL, LOW(NUMBER*2)
+000038 e0f4                      	ldi ZH, HIGH(NUMBER*2)
+000039 e0e0                      	ldi ZL, LOW(NUMBER*2)
                                  
-                                 	//Allocated 4 bytes in memory
+                                 	//Allocated N bytes in memory
                                  	.dseg
                                  	.org 0x60
-                                 	TIME_VAR:
-000060                           	.byte 0x04
                                  
+                                 TIME_VAR:
+000060                           	.byte NUMBER_OF_DISPLAYS
+                                 
+                                 CURRENT_DISPLAY:
+000064                           	.byte 1
                                  
                                  	.cseg
-                                 	
-                                 	
-00003b e6c0                      	ldi YL, LOW(TIME_VAR)
-00003c e0d0                      	ldi YH, HIGH(TIME_VAR)
-00003d e000                      	ldi r16,0x00
-00003e 8308                      	std Y+0,r16
-00003f 8309                      	std Y+1,r16
-000040 830a                      	std Y+2,r16
-000041 830b                      	std Y+3,r16
+00003a e6c0                      	ldi YL, LOW(TIME_VAR)
+00003b e0d0                      	ldi YH, HIGH(TIME_VAR)
                                  
+00003c e000                      	ldi r16,0x00
+00003d e014                      	ldi r17, NUMBER_OF_DISPLAYS
+                                 	
+00003e 940e 0047                 	call CLEAR_N_BYTES
+000040 940e 004f                 	call TIMER1_INIT
+000042 940e 005d                 	call TIMER0_INIT
+000044 9478                      	sei
+000045 940c 0063                 	jmp main
+                                 
+                                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                 CLEAR_N_BYTES:
+000047 93cf                      	push YL
+000048 93df                      	push YH
+000049 9309                      	st Y+, r16 //STORE WITH ZERO
+00004a 951a                      	dec r17
+                                 	;cpi r17, 0
+00004b f7d9                      	brne CLEAR_N_BYTES
+00004c 91df                      	pop YH
+00004d 91cf                      	pop YL
+00004e 9508                      	ret
                                  TIMER1_INIT: ;16-bit timer 1 set as an overflow timer 
                                  	
                                  	; Setting counter mode
-000042 e108                      	ldi r16, (1<<WGM13)|(1<<WGM12)
-000043 bd0e                      	out TCCR1B, r16
+00004f e108                      	ldi r16, (1<<WGM13)|(1<<WGM12)
+000050 bd0e                      	out TCCR1B, r16
                                  
-000044 e002                      	ldi r16, (1<<WGM11)|(0<<WGM10) 
-000045 bd0f                      	out TCCR1A, r16
+000051 e002                      	ldi r16, (1<<WGM11)|(0<<WGM10) 
+000052 bd0f                      	out TCCR1A, r16
                                  
                                  	; Setting max counter value before overflow
-000046 e30d                      	ldi r16, 0x3D
-000047 bd07                      	out ICR1H, r16
-000048 e008                      	ldi r16, 0x08
-000049 bd06                      	out ICR1L, r16
+000053 e30d                      	ldi r16, 0x3D
+000054 bd07                      	out ICR1H, r16
+000055 e008                      	ldi r16, 0x08
+000056 bd06                      	out ICR1L, r16
                                  
                                  	; Setting prescaling and interrupt
-00004a b50e                      	in r16, TCCR1B  
-00004b 6003                      	ori r16,(0<<CS12)|(1<<CS11)|(1<<CS10) ;Prescaler set to F_CPU/64 (S:108)
+000057 b50e                      	in r16, TCCR1B  
+000058 6003                      	ori r16,(0<<CS12)|(1<<CS11)|(1<<CS10) ;Prescaler set to F_CPU/64 (S:108)
                                  
-00004c bd0e                      	out TCCR1B, r16
-00004d e004                      	ldi r16, 1<<TOIE1
-00004e bf09                      	out TIMSK, r16
-                                 	
+000059 bd0e                      	out TCCR1B, r16
+00005a e004                      	ldi r16, 1<<TOIE1
+00005b bf09                      	out TIMSK, r16
+00005c 9508                      	ret
                                  
                                  TIMER0_INIT:
-                                 
-00004f e002                      	ldi r16, (0<<CS02)|(1<<CS01)|(0<<CS00) // Prescaler 256
-000050 bf03                      	out TCCR0, r16
+00005d e002                      	ldi r16, (0<<CS02)|(1<<CS01)|(0<<CS00) // Prescaler 256
+00005e bf03                      	out TCCR0, r16	
                                  	
-000051 b709                      	in r16, TIMSK
-000052 6001                      	ori r16, (1<<TOIE0)
-                                 
-000053 bf09                      	out TIMSK, r16
-000054 9478                      	sei
+00005f b709                      	in r16, TIMSK
+000060 6001                      	ori r16, (1<<TOIE0)
+000061 bf09                      	out TIMSK, r16
+                                 	
+                                 	//sbi TIMSK, TOIE0
+000062 9508                      	ret
                                  
                                  MAIN:
-000055 0000                      	nop
-000056 cffe                      	rjmp MAIN
+000063 0000                      	nop
+000064 cffe                      	rjmp MAIN
                                  	
                                  
                                  
                                  ISR_TIMER1:
-000057 930f                      	push r16
-000058 b70f                      	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
-000059 930f                      	push r16
-00005a 940e 0079                 	call TIMER_COUNTER
-00005c 910f                      	pop r16
-00005d bf0f                      	out SREG,r16
-00005e 910f                      	pop r16
-00005f 9518                      	reti
-                                 	
+000065 930f                      	push r16
+000066 b70f                      	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
+                                 	;push r16
+000067 940e 0090                 	call TIMER_COUNTER
+                                 	;pop r16
+000069 bf0f                      	out SREG,r16
+00006a 910f                      	pop r16
+00006b 9518                      	reti
+                                 
+                                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
                                  ISR_TIMER0:
-000060 930f                      	push r16
-000061 b70f                      	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
-000062 930f                      	push r16
+00006c 930f                      	push r16
+00006d b70f                      	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
+                                 	;push r16
+00006e 940e 0073                 	call DISPLAY_TIME
+                                 	;pop r16
+000070 bf0f                      	out SREG,r16
+000071 910f                      	pop r16
+000072 9518                      	reti
                                  
-000063 940e 0069                 	call DISPLAY_TIME
-                                 
-000065 910f                      	pop r16
-000066 bf0f                      	out SREG,r16
-000067 910f                      	pop r16
-000068 9518                      	reti
-                                 
+                                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                  DISPLAY_TIME:
-000069 e000                      	 ldi r16, 0x00
-00006a bb22                      	 out PORTD, COUNTER
-00006b 9523                      	 inc COUNTER
-00006c 3024                      	 cpi COUNTER, 0x04
-00006d f409                      	 brne MAX_NUM
-00006e 2722                      	 clr COUNTER
-                                 	 
-                                 MAX_NUM:
+000073 93cf                      	 push YL
+000074 93df                      	 push YH
+000075 93ff                      	 push ZH
+000076 93ef                      	 push ZL
+000077 932f                      	 push COUNTER
                                  
-00006f 0fc2                      	add YL,COUNTER
-000070 8108                      	ld  r16, Y
-000071 930f                      	push r16
-000072 0fe0                      	add ZL, r16
-000073 9104                      	lpm r16, Z
-000074 bb08                      	out PORTB, r16
-000075 910f                      	pop r16
-000076 1be0                      	sub ZL,r16
-000077 1bc2                      	sub YL, COUNTER
-000078 9508                      	ret
+000078 e0d0                      	 ldi YH, HIGH(CURRENT_DISPLAY)
+000079 e6c4                      	 ldi YL, LOW(CURRENT_DISPLAY)
                                  
+00007a 8128                      	 ld COUNTER, Y
+00007b bb22                      	 out PORTD, COUNTER
+                                 
+00007c e0d0                      	 ldi YH, HIGH(TIME_VAR)
+00007d e6c0                      	 ldi YL, LOW(TIME_VAR) 
+                                 	 //sub YL, NUMBER_OF_DISPLAYS
+00007e 0fc2                      	 add YL, COUNTER
+00007f 8108                      	 ld  r16, Y
+                                 
+000080 0fe0                      	 add ZL, r16
+000081 9104                      	 lpm r16, Z
+000082 bb08                      	 out PORTB, r16
+                                 
+000083 9523                      	 inc COUNTER ; till SRAM
+000084 3024                      	 cpi COUNTER, NUMBER_OF_DISPLAYS
+000085 f409                      	 brne NOT_MAX_MODULO
+000086 2722                      	 clr COUNTER
+                                 
+                                 
+                                 	 	 
+                                 NOT_MAX_MODULO:
+000087 e0d0                          ldi YH, HIGH(CURRENT_DISPLAY)
+000088 e6c4                      	ldi YL, LOW(CURRENT_DISPLAY) 
+000089 8328                      	st  Y, COUNTER 
+00008a 912f                      	pop COUNTER
+00008b 91ef                      	pop ZL	
+00008c 91ff                      	pop ZH
+00008d 91df                          pop YH
+00008e 91cf                      	pop YL
+00008f 9508                      	ret
+                                 
+                                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                  TIMER_COUNTER:
-000079 93cf                      	push YL //Sparar Y-pekaren i "noll-läge" dvs offset 0, rad 60 SRAM
-                                 	
-00007a 940e 008a                 	call LOAD_STORE10;DAGS ATT ÖKA 1-tals-sekund
-00007c f459                      	brne DONE_WITH_INC ;LOAD_STORE sätter Z-flagga då den kommit upp i 6 / 10
-00007d 95c3                      	inc YL 
-00007e 940e 0091                 	call LOAD_STORE6;DAGS ATT ÖKA 10-tals-sekund 
-000080 f439                      	brne DONE_WITH_INC
-000081 95c3                      	inc YL 
-000082 940e 008a                 	call LOAD_STORE10;DAGS ATT ÖKA 1-tals-minut
-000084 f419                      	brne DONE_WITH_INC
-000085 95c3                      	inc YL 
-000086 940e 0091                 	call LOAD_STORE6;DAGS ATT ÖKA 10-tals-minut
+000090 93df                      	push YH
+000091 93cf                      	push YL						//Sparar Y-pekaren i "noll-läge" dvs offset 0, rad 60 SRAM
+000092 e6c0                      	ldi	 YL,TIME_VAR
                                  
-                                 DONE_WITH_INC:
-000088 91cf                      	pop YL
-000089 9508                      	ret
-                                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+000093 940e 00a4                 	call LOAD_STORE10			//DAGS ATT ÖKA 1-tals-sekund
+000095 f459                      	brne DONE_WITH_INC			//LOAD_STORE sätter Z-flagga då den kommit upp i 6 / 10
+000096 95c3                      	inc  YL 
+000097 940e 00ab                 	call LOAD_STORE6			//DAGS ATT ÖKA 10-tals-sekund 
+000099 f439                      	brne DONE_WITH_INC
+00009a 95c3                      	inc  YL 
+00009b 940e 00a4                 	call LOAD_STORE10			//DAGS ATT ÖKA 1-tals-minut
+00009d f419                      	brne DONE_WITH_INC
+00009e 95c3                      	inc  YL 
+00009f 940e 00ab                 	call LOAD_STORE6			//DAGS ATT ÖKA 10-tals-minut
+                                 
+                                 	DONE_WITH_INC:
+0000a1 91cf                      	pop YL
+0000a2 91df                      	pop YH
+0000a3 9508                      	ret
                                  
                                  LOAD_STORE10:
-00008a 8118                      	ld r17, Y
-00008b 9513                      	inc r17
-00008c 301a                      	cpi r17, 10
-00008d f409                      	brne NOTT_10
-00008e 2711                      	clr r17
-                                 NOTT_10:
-00008f 8318                      	st Y, r17
-000090 9508                      	ret
-                                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                                 LOAD_STORE6:
-000091 8118                      	ld r17, Y
-000092 9513                      	inc r17
-000093 3016                      	cpi r17, 6
-000094 f409                      	brne NOTT_6
-000095 2711                      	clr r17
-                                 NOTT_6:
-000096 8318                      	st Y, r17
-000097 9508                      	ret
-                                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                                 /*
-                                 TIMER_COUNTER:
-                                 	
-                                 	// Sekunder
-                                 	ldd r17, Y+0
-                                 	inc r17 
-                                 	std Y+0, r17
-                                 	cpi r17, 10
-                                 	brne NOT_10
-                                 
-                                 	// Tiotal sek
-                                 	clr r17
-                                 	std Y+0, r17
-                                 	ldd r17, Y+1
-                                 	inc r17
-                                 	std Y+1, r17
-                                 	cpi r17, 6
-                                 	brne NOT_60
-                                 
-                                 	// Minuter
-                                 	clr r17
-                                 	std Y+1, r17
-                                 	ldd r17, Y+2
-                                 	inc r17
-                                 	std Y+2, r17
-                                 	cpi r17, 10
-                                 	brne NOT_10
-                                 
-                                 	// Tiotal Minuter
-                                 	clr r17
-                                 	std Y+2, r17
-                                 	ldd r17, Y+3
-                                 	inc r17
-                                 	std Y+3, r17
-                                 	cpi r17, 6
-                                 	brne NOT_60
-                                 	clr r17
-                                 	std Y+3, r17
-                                 
+0000a4 8118                      	ld r17, Y
+0000a5 9513                      	inc r17
+0000a6 301a                      	cpi r17, 10
+0000a7 f409                      	brne NOT_10
+0000a8 2711                      	clr r17
                                  NOT_10:
+0000a9 8318                      	st Y, r17
+0000aa 9508                      	ret
                                  
-                                 NOT_60:			 
+                                 LOAD_STORE6:
+0000ab 8118                      	ld r17, Y
+0000ac 9513                      	inc r17
+0000ad 3016                      	cpi r17, 6
+0000ae f409                      	brne NOT_6
+0000af 2711                      	clr r17
+                                 NOT_6:
+0000b0 8318                      	st Y, r17
+0000b1 9508                      	ret
+                                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                                  
-                                 	ret
-                                  */
                                  .org 0x0200 
 000200 063f
 000201 4f5b
@@ -1105,6 +1096,12 @@ AVRASM ver. 2.2.7  C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digita
 000203 077c
 000204 677f                      Number: .db 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7C, 0x07, 0x7F, 0x67
                                  
+                                 
+                                 
+                                 
+                                 
+                                 
+                                 // 200 RADER :D
 
 
 RESOURCE USE INFORMATION
@@ -1122,40 +1119,40 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega16A" register use summary:
-x  :   0 y  :   9 z  :   1 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   0 y  :   8 z  :   1 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  51 r17:  10 r18:   6 r19:   0 r20:   0 
-r21:   0 r22:   1 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   8 
-r29:   1 r30:   3 r31:   1 
-Registers used: 10 out of 35 (28.6%)
+r13:   0 r14:   0 r15:   0 r16:  40 r17:  12 r18:   9 r19:   0 r20:   0 
+r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:  15 
+r29:  10 r30:   4 r31:   3 
+Registers used: 9 out of 35 (25.7%)
 
 "ATmega16A" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   2 adiw  :   0 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   6 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   6 cbi   :   0 cbr   :   0 
+brne  :   7 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   9 cbi   :   0 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   3 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   3 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   4 inc   :   6 jmp   :   3 
-ld    :   3 ldd   :   0 ldi   :  17 lds   :   0 lpm   :   2 lsl   :   0 
+cpi   :   3 cpse  :   0 dec   :   1 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   4 inc   :   6 jmp   :   4 
+ld    :   4 ldd   :   0 ldi   :  23 lds   :   0 lpm   :   2 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   1 or    :   0 ori   :   2 out   :  16 pop   :   6 
-push  :   6 rcall :   0 ret   :   4 reti  :   2 rjmp  :   1 rol   :   0 
+neg   :   0 nop   :   1 or    :   0 ori   :   2 out   :  16 pop   :  11 
+push  :  11 rcall :   0 ret   :   7 reti  :   2 rjmp  :   1 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   2 std   :   4 sts   :   0 
-sub   :   2 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 23 out of 113 (20.4%)
+sez   :   0 sleep :   0 spm   :   0 st    :   4 std   :   0 sts   :   0 
+sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
+Instructions used: 22 out of 113 (19.5%)
 
 "ATmega16A" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00040a    220     10    230   16384   1.4%
-[.dseg] 0x000060 0x000064      0      4      4    1024   0.4%
+[.cseg] 0x000000 0x00040a    272     10    282   16384   1.7%
+[.dseg] 0x000060 0x000065      0      5      5    1024   0.5%
 [.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 
 Assembly complete, 0 errors, 0 warnings

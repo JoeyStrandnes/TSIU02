@@ -22,21 +22,23 @@
   <FILE>Digitalur.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <SETUP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>23</LINE></SETUP>
-  <ISR_TIMER1><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>103</LINE></ISR_TIMER1>
-  <ISR_TIMER0><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>113</LINE></ISR_TIMER0>
-  <NUMBER><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>231</LINE></NUMBER>
-  <TIME_VAR><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>47</LINE></TIME_VAR>
-  <TIMER1_INIT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>62</LINE></TIMER1_INIT>
-  <TIMER0_INIT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>86</LINE></TIMER0_INIT>
-  <MAIN><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>97</LINE></MAIN>
-  <TIMER_COUNTER><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>146</LINE></TIMER_COUNTER>
-  <DISPLAY_TIME><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>125</LINE></DISPLAY_TIME>
-  <MAX_NUM><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>133</LINE></MAX_NUM>
-  <LOAD_STORE10><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>165</LINE></LOAD_STORE10>
-  <DONE_WITH_INC><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>160</LINE></DONE_WITH_INC>
-  <LOAD_STORE6><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>175</LINE></LOAD_STORE6>
-  <NOTT_10><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>171</LINE></NOTT_10>
-  <NOTT_6><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>181</LINE></NOTT_6>
+  <SETUP><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>21</LINE></SETUP>
+  <ISR_TIMER1><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>115</LINE></ISR_TIMER1>
+  <ISR_TIMER0><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>126</LINE></ISR_TIMER0>
+  <NUMBER><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>222</LINE></NUMBER>
+  <TIME_VAR><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>44</LINE></TIME_VAR>
+  <CURRENT_DISPLAY><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>47</LINE></CURRENT_DISPLAY>
+  <CLEAR_N_BYTES><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>64</LINE></CLEAR_N_BYTES>
+  <TIMER1_INIT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>74</LINE></TIMER1_INIT>
+  <TIMER0_INIT><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>98</LINE></TIMER0_INIT>
+  <main><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>109</LINE></main>
+  <TIMER_COUNTER><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>179</LINE></TIMER_COUNTER>
+  <DISPLAY_TIME><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>137</LINE></DISPLAY_TIME>
+  <NOT_MAX_MODULO><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>167</LINE></NOT_MAX_MODULO>
+  <LOAD_STORE10><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>200</LINE></LOAD_STORE10>
+  <DONE_WITH_INC><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>195</LINE></DONE_WITH_INC>
+  <LOAD_STORE6><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>210</LINE></LOAD_STORE6>
+  <NOT_10><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>206</LINE></NOT_10>
+  <NOT_6><FILE>C:\Users\Joey Strandnes\Documents\GitHub\TSIU02\Labbar\Digitalur\Digitalur\main.asm</FILE><LINE>216</LINE></NOT_6>
  </LABELS>
 </ASSEMBLER_INFO>

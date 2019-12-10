@@ -40,9 +40,12 @@ SETUP:
 	//Allocated N bytes in memory
 	.dseg
 	.org 0x60
+
 TIME_VAR:
 	.byte NUMBER_OF_DISPLAYS
-	.byte	CURR_DISP
+
+CURRENT_DISPLAY:
+	.byte 1
 
 	.cseg
 	ldi YL, LOW(TIME_VAR)
@@ -95,9 +98,12 @@ TIMER1_INIT: ;16-bit timer 1 set as an overflow timer
 TIMER0_INIT:
 	ldi r16, (0<<CS02)|(1<<CS01)|(0<<CS00) // Prescaler 256
 	out TCCR0, r16	
+	
 	in r16, TIMSK
 	ori r16, (1<<TOIE0)
 	out TIMSK, r16
+	
+	//sbi TIMSK, TOIE0
 	ret
 
 MAIN:
@@ -120,52 +126,75 @@ ISR_TIMER1:
 ISR_TIMER0:
 	push r16
 	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
-	push r16
+	;push r16
 	call DISPLAY_TIME
-	pop r16
+	;pop r16
 	out SREG,r16
 	pop r16
 	reti
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 DISPLAY_TIME:
-	 ldi r16, 0x00
+	 push YL
+	 push YH
+	 push ZH
+	 push ZL
+	 push COUNTER
+
+	 ldi YH, HIGH(CURRENT_DISPLAY)
+	 ldi YL, LOW(CURRENT_DISPLAY)
+
+	 ld COUNTER, Y
+	 out PORTD, COUNTER
+
+	 ldi YH, HIGH(TIME_VAR)
+	 ldi YL, LOW(TIME_VAR) 
+	 //sub YL, NUMBER_OF_DISPLAYS
+	 add YL, COUNTER
+	 ld  r16, Y
+
+	 add ZL, r16
+	 lpm r16, Z
+	 out PORTB, r16
+
 	 inc COUNTER ; till SRAM
 	 cpi COUNTER, NUMBER_OF_DISPLAYS
-	 out PORTD, COUNTER
 	 brne NOT_MAX_MODULO
 	 clr COUNTER
+
+
 	 	 
 NOT_MAX_MODULO:
-	add YL,COUNTER
-	ld  r16, Y
-	push r16
-	add ZL, r16
-	lpm r16, Z
-	out PORTB, r16
-	pop r16
-	sub ZL,r16	; !!
-	sub YL, COUNTER	
+    ldi YH, HIGH(CURRENT_DISPLAY)
+	ldi YL, LOW(CURRENT_DISPLAY) 
+	st  Y, COUNTER 
+	pop COUNTER
+	pop ZL	
+	pop ZH
+    pop YH
+	pop YL
 	ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 TIMER_COUNTER:
-	push YL //Sparar Y-pekaren i "noll-läge" dvs offset 0, rad 60 SRAM
-	ldi		YL,TIME_VAR
+	push YH
+	push YL						//Sparar Y-pekaren i "noll-läge" dvs offset 0, rad 60 SRAM
+	ldi	 YL,TIME_VAR
 
-	call LOAD_STORE10;DAGS ATT ÖKA 1-tals-sekund
-	brne DONE_WITH_INC ;LOAD_STORE sätter Z-flagga då den kommit upp i 6 / 10
+	call LOAD_STORE10			//DAGS ATT ÖKA 1-tals-sekund
+	brne DONE_WITH_INC			//LOAD_STORE sätter Z-flagga då den kommit upp i 6 / 10
 	inc  YL 
-	call LOAD_STORE6;DAGS ATT ÖKA 10-tals-sekund 
+	call LOAD_STORE6			//DAGS ATT ÖKA 10-tals-sekund 
 	brne DONE_WITH_INC
 	inc  YL 
-	call LOAD_STORE10;DAGS ATT ÖKA 1-tals-minut
+	call LOAD_STORE10			//DAGS ATT ÖKA 1-tals-minut
 	brne DONE_WITH_INC
 	inc  YL 
-	call LOAD_STORE6;DAGS ATT ÖKA 10-tals-minut
+	call LOAD_STORE6			//DAGS ATT ÖKA 10-tals-minut
 
 	DONE_WITH_INC:
 	pop YL
+	pop YH
 	ret
 
 LOAD_STORE10:
@@ -191,10 +220,3 @@ NOT_6:
 
 .org 0x0200 
 Number: .db 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7C, 0x07, 0x7F, 0x67
-
-
-
-
-
-
-// 200 RADER :D
