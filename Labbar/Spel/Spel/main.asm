@@ -1,3 +1,6 @@
+	
+	; --- lab4spel.asm
+
 	.equ	VMEM_SZ     = 5		; #rows on display
 	.equ	AD_CHAN_X   = 0		; ADC0=PA0, PORTA bit 0 X-led
 	.equ	AD_CHAN_Y   = 1		; ADC1=PA1, PORTA bit 1 Y-led
@@ -17,158 +20,44 @@ TPOSY:	.byte	1
 LINE:	.byte	1	; Current line	
 VMEM:	.byte	VMEM_SZ ; Video MEMory
 SEED:	.byte	1	; Seed for Random
+
+	; ---------------------------------------
+	; --- Code
 	.cseg
+	.org 	$0
+	jmp	START
+	.org	0x12
+	jmp	ISR_TIMER0
 
-.org 0x00
-jmp SETUP
+	
 
-.org 0x12
-jmp ISR_TIMER0
-
-
-.org 0x30
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-SETUP: 
-
+START:
 	ldi	r16, HIGH(RAMEND)
 	out	SPH, r16
 	ldi	r16, LOW(RAMEND)
 	out	SPL, r16
 
-	ldi r16, 0xFF
-	out DDRB, r16
-
-	ldi r16, 0x07
-	out DDRD, r16
-
-	call TIMER0_INIT
-	call ADC_INIT
-	call ERASE_VMEM
-	call CLEAR_JOYSTICK
-
-	sei
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-CLEAR_JOYSTICK:
-	push ZL
-	push ZH
-
-	ldi ZL, LOW(SRAM_START)
-	ldi ZH, HIGH(SRAM_START)
-
-CLEAR_JOYSTICK_LOOP:	
-	ld r16, Z
-	clr r16
-	st Z+, r16	
-	cpi ZL, LINE
-	brne CLEAR_JOYSTICK_LOOP
-
-	pop ZH
-	pop ZL
-
-	ret
+	call	HW_INIT	
+	call	WARM
+RUN:
+	call	JOYSTICK
+	call	ERASE_VMEM
+	call	UPDATE
+	call	DELAY_500
+/*
+*** 	Vänta en stund så inte spelet går för fort 	***
 	
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-MAIN:
-	call JOYSTICK
-	call ERASE_VMEM
-	call UPDATE
-	//call DELAY_500
-	//call BEEP
-	rjmp MAIN
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-TIMER0_INIT:
-	ldi r16, (0<<CS02)|(1<<CS01)|(0<<CS00) // Prescaler 256
-	out TCCR0, r16	
-	in r16, TIMSK
-	ori r16, (1<<TOIE0)
-	out TIMSK, r16
-
-	ret
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-ADC_INIT:
+*** 	Avgör om träff				 	***
+*/	
 	
-	ldi r16, (0<<REFS1)|(0<<REFS0)|(0<<ADLAR)
-	out ADMUX, r16
-
-	ldi r16, (1<< ADEN)|(0<<ADIE)|(0<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)
-	out ADCSRA, r16
-
-	sbi ADCSRA, ADSC
-wait:
-	sbic ADCSRA, ADSC
-	rjmp wait
-
-	in r16, ADCH
-
-	ret
-
+	brne	NO_HIT	
+	ldi	r16,BEEP_LENGTH
+	call	BEEP
+	call	WARM
+NO_HIT:
+	jmp	RUN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-ISR_TIMER0:
-	push r16
-	in r16,SREG //RÄDDAR FLAGGOR- SKA VARA KVAR! :D
-	call MUX
-	out SREG,r16
-	pop r16
-	reti
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-JOYSTICK:
-	;push r16
-	push YH
-	push YL
 
-	ldi YH, HIGH(POSX)
-	ldi YL, LOW(POSX)
-	
-	//ldi r16, (AD_CHAN_X<<) KANSKE
-	cbi ADMUX, MUX0
-	call GET_POS
-	inc YL
-	sbi ADMUX, MUX0
-	call GET_POS
-
-	call JOY_LIM
-	pop YL
-	pop YH
-	;pop r16
-	ret
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-GET_POS:
-	push r16
-	ld  r16, Y
-
-	sbi ADCSRA, ADSC
-WAIT_FOR_AD:
-	sbic ADCSRA, ADSC
-	rjmp WAIT_FOR_AD
-
-	in r17, ADCH
-
-	cpi r17, 0x03
-	breq INC_POS
-	cpi r17, 0x00
-	breq DEC_POS
-	rjmp DONE_WITH_INPUT
-INC_POS:
-	inc r16
-	rjmp DONE_WITH_INPUT
-
-DEC_POS:
-	dec r16
-
-DONE_WITH_INPUT:
-	st Y,r16
-
-	pop r16
-	ret
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MUX:
 	push ZL
 	push ZH
@@ -198,65 +87,61 @@ MUX_DONE:
 	pop ZH
 	pop ZL
 	ret
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-ERASE_VMEM:
-	push ZL
-	push ZH
+JOYSTICK:
+	;push r16
+	push YH
+	push YL
 
-	ldi ZL, LOW(VMEM)
-	ldi ZH, HIGH(VMEM)
+	ldi YH, HIGH(POSX)
+	ldi YL, LOW(POSX)
+	
+	//ldi r16, (AD_CHAN_X<<) KANSKE
+	cbi ADMUX, MUX0
+	call GET_POS
+	inc YL
+	sbi ADMUX, MUX0
+	call GET_POS
 
-ERASE_VMEM_LOOP:	
-	ld r16, Z
-	ldi r16, 0b01010101
-	//clr r16
-	st Z+, r16	
-	cpi ZL, VMEM+VMEM_SZ
-	brne ERASE_VMEM_LOOP
-
-
-
-	pop ZH
-	pop ZL
+	call JOY_LIM
+	pop YL
+	pop YH
+	;pop r16
 	ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+GET_POS:
+	push r16
+	ld  r16, Y
 
-BEEP:
-	ldi		r16,BEEP_LENGTH 
-BEEP_LOOP:
-	sbi		PORTB, 7
-	call	DELAY
-	cbi		PORTB, 7
-	call	DELAY
-	dec		r16
-	brne	BEEP_LOOP
+	sbi ADCSRA, ADSC
+WAIT_FOR_AD:
+	sbic ADCSRA, ADSC
+	rjmp WAIT_FOR_AD
+
+	in r17, ADCH
+
+	cpi r17, 0x03
+	breq INC_POS
+	cpi r17, 0x00
+	breq DEC_POS
+	rjmp DONE_WITH_INPUT
+INC_POS:
+	inc r16
+	rjmp DONE_WITH_INPUT
+
+DEC_POS:
+	dec r16
+
+DONE_WITH_INPUT:
+	st Y,r16
+
+	pop r16
 	ret
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-DELAY:
-	push	r16
-	ldi		r16,BEEP_PITCH 
-DELAY_LOOP:
-	dec		r16
-	brne	DELAY_LOOP
 
-	pop		r16
-	ret
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-DELAY_500:
-	ldi  r18, 3
-    ldi  r19, 138
-    ldi  r20, 86
-L1: dec  r20
-    brne L1
-    dec  r19
-    brne L1
-    dec  r18
-    brne L1
-    ret
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 JOY_LIM:
 	call	LIMITS		; don't fall off world!
 	ret
@@ -325,3 +210,178 @@ SETBIT_LOOP:
 	jmp 	SETBIT_LOOP
 SETBIT_END:
 	ret
+
+	; ---------------------------------------
+	; --- Hardware init
+	; --- Uses r16
+HW_INIT:
+
+	ldi r16, 0xFF
+	out DDRB, r16
+
+	ldi r16, 0x07
+	out DDRD, r16
+
+	call TIMER0_INIT
+	call ADC_INIT
+	call ERASE_VMEM
+	call CLEAR_JOYSTICK // ERSÄTTAS MED RANDOM SEED
+
+	sei
+
+	ret
+
+	; ---------------------------------------
+	; --- WARM start. Set up a new game
+WARM:
+
+/**** 	Sätt startposition (POSX,POSY)=(0,2)		***
+
+	push	r0		
+	push	r0		
+	call	RANDOM		; RANDOM returns x,y on stack
+
+*** 	Sätt startposition (TPOSX,POSY)				****/
+
+	//call	ERASE_VMEM
+	ret
+
+	; ---------------------------------------
+	; --- RANDOM generate TPOSX, TPOSY
+	; --- in variables passed on stack.
+	; --- Usage as:
+	; ---	push r0 
+	; ---	push r0 
+	; ---	call RANDOM
+	; ---	pop TPOSX 
+	; ---	pop TPOSY
+	; --- Uses r16
+RANDOM:
+	in	r16,SPH
+	mov	ZH,r16
+	in	r16,SPL
+	mov	ZL,r16
+	lds	r16,SEED
+/*	
+*** 	Använd SEED för att beräkna TPOSX		***
+*** 	Använd SEED för att beräkna TPOSX		***
+
+	***		; store TPOSX	2..6
+	***		; store TPOSY   0..4*/
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+ERASE_VMEM:
+	push ZL
+	push ZH
+
+	ldi ZL, LOW(VMEM)
+	ldi ZH, HIGH(VMEM)
+
+ERASE_VMEM_LOOP:	
+	ld r16, Z
+	//ldi r16, 0b10101010
+	clr r16
+	st Z+, r16	
+	cpi ZL, VMEM+VMEM_SZ
+	brne ERASE_VMEM_LOOP
+
+	pop ZH
+	pop ZL
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	; ---------------------------------------
+	; --- BEEP(r16) r16 half cycles of BEEP-PITCH
+BEEP:
+	//ldi		r16,BEEP_LENGTH 
+BEEP_LOOP:
+	sbi		PORTB, 7
+	call	DELAY
+	cbi		PORTB, 7
+	call	DELAY
+	dec		r16
+	brne	BEEP_LOOP
+	ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DELAY:
+	push	r16
+	ldi		r16,BEEP_PITCH 
+DELAY_LOOP:
+	dec		r16
+	brne	DELAY_LOOP
+	pop		r16
+	ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DELAY_500:
+	ldi  r18, 3
+    ldi  r19, 138
+    ldi  r20, 86
+L1: dec  r20
+    brne L1
+    dec  r19
+    brne L1
+    dec  r18
+    brne L1
+    ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+TIMER0_INIT:
+	ldi r16, (0<<CS02)|(1<<CS01)|(0<<CS00) // Prescaler 256
+	out TCCR0, r16	
+	in r16, TIMSK
+	ori r16, (1<<TOIE0)
+	out TIMSK, r16
+
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+ADC_INIT:
+	
+	ldi r16, (0<<REFS1)|(0<<REFS0)|(0<<ADLAR)
+	out ADMUX, r16
+
+	ldi r16, (1<< ADEN)|(0<<ADIE)|(0<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)
+	out ADCSRA, r16
+
+	sbi ADCSRA, ADSC
+wait:
+	sbic ADCSRA, ADSC
+	rjmp wait
+
+	in r16, ADCH
+
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+ISR_TIMER0:
+	push r16
+	in r16,SREG 
+	call MUX
+	out SREG,r16
+	pop r16
+	reti
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+CLEAR_JOYSTICK:
+	push ZL
+	push ZH
+
+	ldi ZL, LOW(SRAM_START)
+	ldi ZH, HIGH(SRAM_START)
+
+CLEAR_JOYSTICK_LOOP:	
+	ld r16, Z
+	clr r16
+	st Z+, r16	
+	cpi ZL, LINE
+	brne CLEAR_JOYSTICK_LOOP
+
+	pop ZH
+	pop ZL
+
+	ret
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
