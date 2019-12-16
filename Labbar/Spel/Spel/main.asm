@@ -6,8 +6,8 @@
 	.equ	AD_CHAN_Y   = 1		; ADC1=PA1, PORTA bit 1 Y-led
 	.equ	GAME_SPEED  = 70	; inter-run delay (millisecs)
 	.equ	PRESCALE    = 7		; AD-prescaler value
-	.equ	BEEP_PITCH  = 20	; Victory beep pitch
-	.equ	BEEP_LENGTH = 100	; Victory beep length
+	.equ	BEEP_PITCH  = 50	; Victory beep pitch
+	.equ	BEEP_LENGTH = 200	; Victory beep length
 	
 	; ---------------------------------------
 	; --- Memory layout in SRAM
@@ -49,7 +49,16 @@ RUN:
 	
 *** 	Avgör om träff				 	***
 */	
-	
+	ldi YH, HIGH(POSX)
+	ldi YL, LOW(POSX)
+	ld  r16, Y
+	ldd r17, Y+2
+	cp  r16,r17
+	brne	NO_HIT
+	inc YL
+	ld r16, Y
+	ldd r17, Y+2
+	cp r16, r17
 	brne	NO_HIT	
 	ldi	r16,BEEP_LENGTH
 	call	BEEP
@@ -234,7 +243,7 @@ HW_INIT:
 	; ---------------------------------------
 	; --- WARM start. Set up a new game
 WARM:
-
+	
 /**** 	Sätt startposition (POSX,POSY)=(0,2)		***
 
 	push	r0		
@@ -242,8 +251,15 @@ WARM:
 	call	RANDOM		; RANDOM returns x,y on stack
 
 *** 	Sätt startposition (TPOSX,POSY)				****/
-
-	//call	ERASE_VMEM
+	ldi YH, HIGH(POSX)
+	ldi	YL, LOW(POSX)
+	clr r16
+	st  Y+, r16
+	
+	ldi r16, 2
+	st Y, r16
+	call RANDOM 
+	call ERASE_VMEM
 	ret
 
 	; ---------------------------------------
@@ -257,18 +273,48 @@ WARM:
 	; ---	pop TPOSY
 	; --- Uses r16
 RANDOM:
-	in	r16,SPH
-	mov	ZH,r16
-	in	r16,SPL
-	mov	ZL,r16
-	lds	r16,SEED
+	lds r16, SEED
+	andi r16, 0x07 //FÅR UT DE 3 LÄGSTA BITARNA VILKET HAR VÄRDET 0-7
+	cpi r16, 7
+	brmi X_UPPER_LIMIT_OK
+	dec r16
+
+X_UPPER_LIMIT_OK:
+	cpi r16, 1
+	mov r17, r16 //SPARAR TPOSX I R17
+	brpl X_LOWER_LIMIT_OK
+	inc r16 
+	rjmp X_UPPER_LIMIT_OK
+
+X_LOWER_LIMIT_OK:
+
+	lds r16, SEED
+	
+	swap r16
+	andi r16, 0x07
+	cpi r16, 5
+	brmi Y_UPPER_LIMIT_OK
+	dec r16
+	rjmp X_LOWER_LIMIT_OK
+
+Y_UPPER_LIMIT_OK:
+	cpi r16, -1
+	brpl Y_LOWER_LIMIT_OK
+	inc r16 
+	rjmp Y_UPPER_LIMIT_OK
+
+Y_LOWER_LIMIT_OK:
+	sts	TPOSX, r17 // SPARAR TPOSX
+	sts TPOSY, r16 // SPARAR TPOSY
+	ret
+
 /*	
 *** 	Använd SEED för att beräkna TPOSX		***
 *** 	Använd SEED för att beräkna TPOSX		***
 
 	***		; store TPOSX	2..6
 	***		; store TPOSY   0..4*/
-	ret
+	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -281,7 +327,6 @@ ERASE_VMEM:
 
 ERASE_VMEM_LOOP:	
 	ld r16, Z
-	//ldi r16, 0b10101010
 	clr r16
 	st Z+, r16	
 	cpi ZL, VMEM+VMEM_SZ
@@ -294,7 +339,7 @@ ERASE_VMEM_LOOP:
 	; ---------------------------------------
 	; --- BEEP(r16) r16 half cycles of BEEP-PITCH
 BEEP:
-	//ldi		r16,BEEP_LENGTH 
+	cli
 BEEP_LOOP:
 	sbi		PORTB, 7
 	call	DELAY
@@ -302,6 +347,7 @@ BEEP_LOOP:
 	call	DELAY
 	dec		r16
 	brne	BEEP_LOOP
+	sei
 	ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -316,8 +362,8 @@ DELAY_LOOP:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 DELAY_500:
-	ldi  r18, 3
-    ldi  r19, 138
+	ldi  r18, 2
+    ldi  r19, 100
     ldi  r20, 86
 L1: dec  r20
     brne L1
@@ -361,10 +407,20 @@ ISR_TIMER0:
 	push r16
 	in r16,SREG 
 	call MUX
+	call INCREASE_SEED
 	out SREG,r16
 	pop r16
 	reti
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+INCREASE_SEED:
+	ldi YH, HIGH(SEED)
+	ldi YL, LOW(SEED)
+	ld	r16, Y
+	inc r16
+	st	Y, r16
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 CLEAR_JOYSTICK:
 	push ZL
 	push ZH
