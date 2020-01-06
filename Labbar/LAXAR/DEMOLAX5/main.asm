@@ -1,0 +1,51 @@
+
+	ldi r16, HIGH(RAMEND)
+	out SPH, r16
+	ldi r16, LOW(RAMEND)
+	out SPL, r16
+
+	call HW_SETUP
+	call MAIN
+
+
+HW_SETUP:
+	ldi r16, 0xFF
+	out DDRB, r16 // OUTPUT TILL DIODERNA
+	ldi r16, 0x00
+	out DDRA, r16 // INPUT FRÅN IR-TANGENTBORDET
+	ldi r16, 0x00
+	out DDRD, r16 // INPUT FRÅN STROBE
+	ret
+
+MAIN:
+	//clt 
+
+WAIT_FOR_STROBE_ON:
+	sbis PIND, 0
+	jmp WAIT_FOR_STROBE_ON
+
+	in r16, PINA
+	andi r16, 0x0F // SÅLLAR UT DE 4 MINSTA BITARNA - oftast inte nödvändigt
+	cpi r16, 0 
+	brne INPUT_NOT_ZERO
+	brts TOGGLE_OFF
+	set // TOGGLE_ON
+	jmp INPUT_NOT_ZERO
+TOGGLE_OFF: // BRANCHAR HIT OM T REDAN ÄR 1 OCH 0-SÄTTER
+	clt
+
+INPUT_NOT_ZERO:
+	mov r17,r16 //KOPIERAR r16 till r17
+	brtc COMBINE_REGISTERS
+	com r17 // INVERTERAR r17 FÖR ATT T-FLAGGAN ÄR 1
+	andi r17, 0x0F // NOLLAR DE 4 HÖGSTA BITARNA DÅ COM 1-SATTE DOM
+COMBINE_REGISTERS:
+	swap r16 
+	or r16,r17 //KOMBINERAR SÅ ATT DE 4 HÖGSTA
+	out PORTB, r16
+
+WAIT_FOR_STROBE_OFF:
+	sbic PIND,0
+	jmp WAIT_FOR_STROBE_OFF
+
+	jmp WAIT_FOR_STROBE_ON
