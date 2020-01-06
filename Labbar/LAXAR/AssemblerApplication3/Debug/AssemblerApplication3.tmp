@@ -1,0 +1,35 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.57</VERSION>
+ <DEVICE>"ATmega16A"</DEVICE>
+ <WORKING_DIR>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1175\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR Assembler\Native\2.1.1175\avrassembler\Include\m16Adef.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\Debug/AssemblerApplication3.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>AssemblerApplication3.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>AssemblerApplication3.map</FILE>
+  <FILE>AssemblerApplication3.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <HW_SETUP><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>11</LINE></HW_SETUP>
+  <MAIN><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>20</LINE></MAIN>
+  <WAIT_FOR_STROBE_ON><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>24</LINE></WAIT_FOR_STROBE_ON>
+  <OK_VALUE><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>36</LINE></OK_VALUE>
+  <WAIT_FOR_STROBE_OFF><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>51</LINE></WAIT_FOR_STROBE_OFF>
+  <TOGGLE_T><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>56</LINE></TOGGLE_T>
+  <RIGHT><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>40</LINE></RIGHT>
+  <COMBINE><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>44</LINE></COMBINE>
+  <TOGGLE_OFF><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>60</LINE></TOGGLE_OFF>
+  <DONE_WITH_TOGGLE><FILE>\\ad.liu.se\home\johol842\Documents\Atmel Studio\6.2\AssemblerApplication3\AssemblerApplication3\AssemblerApplication3.asm</FILE><LINE>62</LINE></DONE_WITH_TOGGLE>
+ </LABELS>
+</ASSEMBLER_INFO>
